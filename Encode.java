@@ -3,7 +3,9 @@ import java.lang.Math;
 
 class Encode{
 
+	//holds the current state of the block being encoded
 	public static int[][] stateArray;
+	//holds the current version of the key to apply
 	public static int[][] keyArray;
 
 	public static int[][] sBox = {
@@ -26,9 +28,8 @@ class Encode{
 	}; 
 
 
-	//Constructor to encode this
+	//Constructor to encode this block of plaintext with this given cipherkey
 	Encode(int[][] s, int[][] k){
-		//constructor receives original state and key arrays
 		this.stateArray = s;
 		this.keyArray = k;
 		System.out.println("Encode!\n");
@@ -69,25 +70,26 @@ class Encode{
 	//==================================shiftRows=====================
 	public static void shiftRows(){
 		int offset = 0;
-		int[] temp = new int[4];
-		int t;
+		int[] origRow = new int[4];
+		int position;
 		for(int row = 0; row < 4; row++){
-			//collect current values of this row's columns
-			temp[0] = stateArray[row][0];
-			temp[1] = stateArray[row][1];
-			temp[2] = stateArray[row][2];
-			temp[3] = stateArray[row][3];
+			//collect original values of this row's columns
+			origRow[0] = stateArray[row][0];
+			origRow[1] = stateArray[row][1];
+			origRow[2] = stateArray[row][2];
+			origRow[3] = stateArray[row][3];
+			//rotate the row forward
 			for(int column = 0; column < 4; column++){
-				t = (column-offset)%4;
-				if (Math.signum(t) == -1){
-					t=4+t;
+				position = (column-offset)%4;
+				if (Math.signum(position) == -1){
+					//subtract from end if item is displaced from the front
+					position=4+position;
 				}
-				stateArray[row][t] = temp[column];
+				stateArray[row][position] = origRow[column];
 			}
 			//offset is incremented after each row
 			offset++;
 		}
-
 		printState();
 		System.out.println("ShiftRows!\n");
 	}
@@ -109,6 +111,7 @@ class Encode{
 		if(round != 0)
 			nextRoundKey(round);
 
+		//XOR columns of stateArray and key
 		for(int column = 0; column < 4; column++){
 			//Get column of interest from both key and state
 			for(int row = 0; row < 4; row++){
@@ -138,9 +141,13 @@ class Encode{
 		int[] prevFirstCol = new int[4];
 		int[] prevLastCol = new int[4];
 		for (int column= 0; column < 4; column++){
-			prevFirstCol[column] = keyArray[column][1];
+			prevFirstCol[column] = keyArray[column][0];
 			prevLastCol[column] =keyArray[column][3]; 	
 		}
+		// printIntArr(prevFirstCol);
+		// System.out.println("prevFirstCol array!!====");
+		// printIntArr(prevLastCol);
+		// System.out.println("prevLastCol array!!====");
 		makeFirstColumn(prevFirstCol, prevLastCol, round);
 		printKey();
 		System.out.println("nextRoundKey\n");
@@ -206,5 +213,12 @@ class Encode{
 			}
 			System.out.println("");
 		}
+	}
+	public static void printIntArr(int[] ia){
+		for (int i = 0; i < ia.length; i++){
+			String hexStr = String.format("%x",ia[i]).toString();
+			System.out.print(hexStr + " ");
+		}
+		System.out.println("");
 	}
 }
