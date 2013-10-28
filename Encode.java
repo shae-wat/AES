@@ -34,6 +34,8 @@ class Encode{
 		System.out.println("Encode!\n");
 	}
 
+
+	//==================================subBytes=====================
 	public static void subBytes(){
 
 		for(int row = 0; row < 4; row++){
@@ -62,6 +64,9 @@ class Encode{
 		printState();
 		System.out.println("SubBytes!");
 	}
+
+
+	//==================================shiftRows=====================
 	public static void shiftRows(){
 		int offset = 0;
 		int[] temp = new int[4];
@@ -86,10 +91,15 @@ class Encode{
 		printState();
 		System.out.println("ShiftRows!");
 	}
+
+
+	//==================================mixColumns=====================
 	public static void mixColumns(){
 		System.out.println("mixColumns!");
 	}
 
+
+	//==================================addRoundKey=====================
 	public static void addRoundKey0(){
 
 		for(int column = 0; column < 4; column++){
@@ -103,6 +113,9 @@ class Encode{
 		printState();
 		System.out.println("addRoundKey!");
 	}
+
+	//==================================keyScheduling=====================
+
 
 	public static int[][] rCon = {
 		{0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36},
