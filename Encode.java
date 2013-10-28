@@ -105,7 +105,7 @@ class Encode{
 	public static void addRoundKey(int round){
 
 		printKey();
-		System.out.println("key addRoundKey is called with\n");
+		System.out.println("key before modification\n");
 
 		//Update the keyArray after using original cipher
 		if(round != 0)
@@ -144,13 +144,18 @@ class Encode{
 			prevFirstCol[column] = keyArray[column][0];
 			prevLastCol[column] =keyArray[column][3]; 	
 		}
-		// printIntArr(prevFirstCol);
-		// System.out.println("prevFirstCol array!!====");
-		// printIntArr(prevLastCol);
-		// System.out.println("prevLastCol array!!====");
 		makeFirstColumn(prevFirstCol, prevLastCol, round);
+
+		//generate rest of the new key's columns
+		for (int column = 1; column < 4; column++){
+			for (int row = 0; row < 4; row++){
+				//XOR prev column of the key in process of being generated & prev key's row to be replaced
+				keyArray[row][column] = keyArray[row][column-1] ^ keyArray[row][column];
+			}
+		}
+
 		printKey();
-		System.out.println("nextRoundKey\n");
+		System.out.println("key generated after nextRoundKey\n");
 
 
 	}
@@ -168,7 +173,6 @@ class Encode{
 
 		//subBytes of the RotWord with the s-box
 		for(int k = 0; k < 4; k++){
-
 			String hexStr = String.format("%x",rotWord[k]).toString();
 			//System.out.println("hexstr = " + hexStr);
 			char[] charLookup = hexStr.toCharArray();
@@ -190,9 +194,8 @@ class Encode{
 
 		// XOR first column of previous key & Rotword & Rcon
 		for(int k = 0; k < 4; k++){
-			//XOR the current columns
 			keyArray[k][round-1] = prevFirstCol[k] ^ rotWord[k] ^ rCon[k][round-1];
-			System.out.println("XOR first column of previous key & Rotword & Rcon\nkeyArray["+k+"]["+(round-1)+"] = " + String.format("%x",keyArray[k][(round-1)]).toString());
+			//System.out.println("XOR first column of previous key & Rotword & Rcon\nkeyArray["+k+"]["+(round-1)+"] = " + String.format("%x",keyArray[k][(round-1)]).toString());
 		}
 	}
 
