@@ -112,8 +112,8 @@ class AES{
             //encrypt = true;
             File encFile = new File(fName+".enc");
             Encode encode = new Encode(stateArray, keyArray);
-            //first step
-            encode.addRoundKey0();
+            //use given key
+            encode.addRoundKey(keyArray);
             //do appropriate number of rounds
             encode.subBytes();
             encode.shiftRows();

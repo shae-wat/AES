@@ -100,7 +100,10 @@ class Encode{
 
 
 	//==================================addRoundKey=====================
-	public static void addRoundKey0(){
+	public static void addRoundKey(int[][] keyArray){
+
+
+		keyArray = nextRoundKey(keyArray);
 
 		for(int column = 0; column < 4; column++){
 			//Get column of interest from both key and state
@@ -114,8 +117,9 @@ class Encode{
 		System.out.println("addRoundKey!");
 	}
 
-	//==================================keyScheduling=====================
 
+
+	//==================================keyScheduling=====================
 
 	public static int[][] rCon = {
 		{0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36},
@@ -124,22 +128,32 @@ class Encode{
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	};
 
-	public static void nextRoundKey(){
-
-
-	}
-
-	public static void makeFirstColumn(){
+	public static int[][] nextRoundKey(int[][] keyArray){
 		int[] firstCol = new int[4];
 		int[] prevLastCol = new int[4];
-		for(int i = 0; i < 4; i++){
-			if(i==3){
-				firstCol[i] = prevLastCol[0];
-			}
-			firstCol[i] = prevLastCol[i + 1];
+
+		for (int column= 0; column < 4; column++){
+			firstCol[column] = keyArray[column][1];
+			prevLastCol[column] =keyArray[column][3]; 
 		}
 
-		// subBytes
+		makeFirstColumn(firstCol, prevLastCol);
+
+		return keyArray;
+	}
+
+	public static void makeFirstColumn(int[] firstCol, int[] prevLastCol){
+
+		//rotate last column of previous key to create RotWord
+		for(int i = 0; i < 4; i++){
+			if(i==3)
+				firstCol[i] = prevLastCol[0];
+			else
+				firstCol[i] = prevLastCol[i + 1];
+			System.out.println("firstCol["+i+"] = prevLastCol["+ (i+1)+"]");
+		}
+
+		//subBytes of the RotWord
 		for(int k = 0; k < 4; k++){
 
 			String hexStr = String.format("%x",firstCol[k]).toString();
@@ -161,7 +175,7 @@ class Encode{
 			}
 		}
 
-		// XOR
+		// XOR first column of previous key & Rotword & Rcon
 		for(int k = 0; k < 4; k++){
 			//XOR the current columns
 			firstCol[k] = firstCol[k] ^ keyArray[k][1] ^ rCon[k][1];
