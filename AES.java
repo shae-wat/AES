@@ -118,6 +118,7 @@ class AES{
             //do appropriate number of rounds
             encode.subBytes();
             encode.shiftRows();
+            encode.addRoundKey(1);
         }
         //If option "d", inputFile is decrypted with a key from keyFile and output an encrypted file w extension ".dec"
         else {

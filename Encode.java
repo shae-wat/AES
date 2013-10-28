@@ -62,7 +62,7 @@ class Encode{
 			}
 		}
 		printState();
-		System.out.println("SubBytes!");
+		System.out.println("SubBytes!\n");
 	}
 
 
@@ -89,7 +89,7 @@ class Encode{
 		}
 
 		printState();
-		System.out.println("ShiftRows!");
+		System.out.println("ShiftRows!\n");
 	}
 
 
@@ -103,10 +103,10 @@ class Encode{
 	public static void addRoundKey(int round){
 
 		printKey();
-		System.out.println("key addRoundKey is called with");
+		System.out.println("key addRoundKey is called with\n");
 
+		//Update the keyArray after using original cipher
 		if(round != 0)
-			//Update the keyArray after using original cipher
 			nextRoundKey(round);
 
 		for(int column = 0; column < 4; column++){
@@ -118,7 +118,7 @@ class Encode{
 			}
 		}
 		printState();
-		System.out.println("addRoundKey!");
+		System.out.println("addRoundKey!\n");
 	}
 
 
@@ -143,7 +143,7 @@ class Encode{
 		}
 		makeFirstColumn(prevFirstCol, prevLastCol, round);
 		printKey();
-		System.out.println("nextRoundKey's first column ");
+		System.out.println("nextRoundKey\n");
 
 
 	}
@@ -185,7 +185,7 @@ class Encode{
 		for(int k = 0; k < 4; k++){
 			//XOR the current columns
 			keyArray[k][round-1] = prevFirstCol[k] ^ rotWord[k] ^ rCon[k][round-1];
-			// System.out.println("result["+row+"]["+column+"] = " + String.format("%x",stateArray[row][column]).toString());
+			System.out.println("XOR first column of previous key & Rotword & Rcon\nkeyArray["+k+"]["+(round-1)+"] = " + String.format("%x",keyArray[k][(round-1)]).toString());
 		}
 	}
 
