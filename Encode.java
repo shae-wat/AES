@@ -100,10 +100,14 @@ class Encode{
 
 
 	//==================================addRoundKey=====================
-	public static void addRoundKey(int[][] keyArray){
+	public static void addRoundKey(int round){
 
+		printKey();
+		System.out.println("key addRoundKey is called with");
 
-		keyArray = nextRoundKey(keyArray);
+		if(round != 0)
+			//Update the keyArray after using original cipher
+			nextRoundKey(round);
 
 		for(int column = 0; column < 4; column++){
 			//Get column of interest from both key and state
@@ -128,57 +132,59 @@ class Encode{
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	};
 
-	public static int[][] nextRoundKey(int[][] keyArray){
-		int[] firstCol = new int[4];
+	public static void nextRoundKey(int round){
+
+		//make first column of next round key
+		int[] prevFirstCol = new int[4];
 		int[] prevLastCol = new int[4];
-
 		for (int column= 0; column < 4; column++){
-			firstCol[column] = keyArray[column][1];
-			prevLastCol[column] =keyArray[column][3]; 
+			prevFirstCol[column] = keyArray[column][1];
+			prevLastCol[column] =keyArray[column][3]; 	
 		}
+		makeFirstColumn(prevFirstCol, prevLastCol, round);
+		printKey();
+		System.out.println("nextRoundKey's first column ");
 
-		makeFirstColumn(firstCol, prevLastCol);
 
-		return keyArray;
 	}
 
-	public static void makeFirstColumn(int[] firstCol, int[] prevLastCol){
+	public static void makeFirstColumn(int[] prevFirstCol, int[] prevLastCol, int round){
+		int[] rotWord = new int[4];
 
 		//rotate last column of previous key to create RotWord
 		for(int i = 0; i < 4; i++){
 			if(i==3)
-				firstCol[i] = prevLastCol[0];
+				rotWord[i] = prevLastCol[0];
 			else
-				firstCol[i] = prevLastCol[i + 1];
-			System.out.println("firstCol["+i+"] = prevLastCol["+ (i+1)+"]");
+				rotWord[i] = prevLastCol[i + 1];
 		}
 
-		//subBytes of the RotWord
+		//subBytes of the RotWord with the s-box
 		for(int k = 0; k < 4; k++){
 
-			String hexStr = String.format("%x",firstCol[k]).toString();
+			String hexStr = String.format("%x",rotWord[k]).toString();
 			//System.out.println("hexstr = " + hexStr);
 			char[] charLookup = hexStr.toCharArray();
 			//Lookup
 			if (charLookup.length == 1){
 				//System.out.println("0 " + charLookup[0]);
 				int j = Character.getNumericValue(charLookup[0]);
-				firstCol[k] = sBox[0][j];
+				rotWord[k] = sBox[0][j];
 			}
 			else {
 				//System.out.println(charLookup[0] + " " + charLookup[1]);
 				int i = Character.getNumericValue(charLookup[0]);
 				int j = Character.getNumericValue(charLookup[1]);
 				//System.out.println("i = " + i + ", j = " + j);
-				//System.out.println("firstCol["+k+"] = " + String.format("%x",sBox[i][j]).toString());
-				firstCol[k] = sBox[i][j];
+				//System.out.println("rotWord["+k+"] = " + String.format("%x",sBox[i][j]).toString());
+				rotWord[k] = sBox[i][j];
 			}
 		}
 
 		// XOR first column of previous key & Rotword & Rcon
 		for(int k = 0; k < 4; k++){
 			//XOR the current columns
-			firstCol[k] = firstCol[k] ^ keyArray[k][1] ^ rCon[k][1];
+			keyArray[k][round-1] = prevFirstCol[k] ^ rotWord[k] ^ rCon[k][round-1];
 			// System.out.println("result["+row+"]["+column+"] = " + String.format("%x",stateArray[row][column]).toString());
 		}
 	}
@@ -187,6 +193,15 @@ class Encode{
 		for(int row = 0; row < 4; row++){
 			for(int column = 0; column < 4; column++){
 				String hexStr = String.format("%x",stateArray[row][column]).toString();
+				System.out.print(hexStr + " ");
+			}
+			System.out.println("");
+		}
+	}
+	public static void printKey(){
+		for(int row = 0; row < 4; row++){
+			for(int column = 0; column < 4; column++){
+				String hexStr = String.format("%x",keyArray[row][column]).toString();
 				System.out.print(hexStr + " ");
 			}
 			System.out.println("");
