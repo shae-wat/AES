@@ -96,10 +96,69 @@ class Encode{
 
 
 	//==================================mixColumns=====================
+	public static int[][] mixColumnsMatrix = {
+		{0x02, 0x03, 0x01, 0x01},
+		{0x01, 0x02, 0x03, 0x01},
+		{0x01, 0x01, 0x02, 0x03},
+		{0x03, 0x01, 0x01, 0x02}
+	};
 	public static void mixColumns(){
+		// multiply columns of state by the mixColumnsMatrix
+		// need to get each column of state
+		// int[] stateColumn = new int[4];
+		for(int column = 0; column < 4; column++){
+			int[] stateColumn = new int[4];
+			// get column
+			for(int i = 0; i < 4; i++){
+				stateColumn[i] = stateArray[i][column];
+			}
+			// call matrixMul with this column
+			matrixMul(stateColumn, column);
+		}
+		printState();
 		System.out.println("mixColumns!");
 	}
 
+	public static void matrixMul(int[] stateColumn, int columnNum){
+		// need to get each column of state
+		int result;
+		// row and column seem to be switched
+		for(int row = 0; row < 4; row++){
+			result = 0;
+			for(int column = 0; column < 4; column++){
+				result += galiosMul(stateColumn[column], mixColumnsMatrix[row][column]);
+			}
+			stateColumn[row] = result;
+		}
+		// need to assign the stateColumn to the stateArray
+		for(int row = 0; row < 4; row++){
+			stateArray[row][columnNum] = stateColumn[row];
+		}
+	}
+
+	public static int galiosMul(int a, int b){
+		int p = 0;
+		// if low bit of b is set
+		for (int i = 0; i < 8; i++) {
+			boolean aHighBitSet = false;
+			if ((b & 0x1) == 1) {
+				p ^= a;
+			}
+			// keep track of a's high set
+			if (a < 0){
+				aHighBitSet = true;
+			}
+			// rotate a by 1 to the left
+			a <<= 1;
+			// XOR if a's high bit is set
+			if(aHighBitSet){
+				a ^= 0x1b;
+			}
+			// rotate b one bit to the right
+			b >>= 1;
+		}
+		return p;
+	}
 
 	//==================================addRoundKey=====================
 	public static void addRoundKey(int round){
