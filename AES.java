@@ -3,27 +3,6 @@ import java.io.*;
 import java.lang.Math;
 
 
-class KeySchedule{
-	int[][] keyArray;
-	int[][] rCon = {
-		{0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	};
-
-	KeySchedule(int[][] k){
-		keyArray = k;
-		System.out.println("Key!");
-	}
-
-
-
-	public static void RotWord(){
-
-	}
-}
-
 
 class AES{
 
@@ -120,7 +99,7 @@ class AES{
             encode.shiftRows();
             encode.mixColumns();
             encode.addRoundKey(1);
-            int x = encode.galiosMul(0x7, 0x3);
+            int x = encode.galiosMul((char)0x7, (char)0x3);
             System.out.println("x = " + x);
         }
         //If option "d", inputFile is decrypted with a key from keyFile and output an encrypted file w extension ".dec"

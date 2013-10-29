@@ -104,10 +104,8 @@ class Encode{
 	};
 	public static void mixColumns(){
 		// multiply columns of state by the mixColumnsMatrix
-		// need to get each column of state
-		// int[] stateColumn = new int[4];
+		int[] stateColumn = new int[4];
 		for(int column = 0; column < 4; column++){
-			int[] stateColumn = new int[4];
 			// get column
 			for(int i = 0; i < 4; i++){
 				stateColumn[i] = stateArray[i][column];
@@ -120,15 +118,18 @@ class Encode{
 	}
 
 	public static void matrixMul(int[] stateColumn, int columnNum){
-		// need to get each column of state
 		int result;
 		// row and column seem to be switched
 		for(int row = 0; row < 4; row++){
 			result = 0;
 			for(int column = 0; column < 4; column++){
-				result += galiosMul(stateColumn[column], mixColumnsMatrix[row][column]);
+				result += galiosMul((char)stateColumn[column], (char)mixColumnsMatrix[column][row]);
+				System.out.println("stateColumn[column] = " + String.format("%x",stateColumn[column]).toString());
+				System.out.println("mixColumnsMatrix[column][row] = " + String.format("%x",mixColumnsMatrix[column][row]).toString());
+				System.out.println("stateColumn["+row+"] +====" + String.format("%x",result).toString());
 			}
 			stateColumn[row] = result;
+			System.out.println("stateColumn["+row+"] =" + String.format("%x",result).toString());
 		}
 		// need to assign the stateColumn to the stateArray
 		for(int row = 0; row < 4; row++){
@@ -136,7 +137,7 @@ class Encode{
 		}
 	}
 
-	public static int galiosMul(int a, int b){
+	public static int galiosMul(char a, char b){
 		int p = 0;
 		// if low bit of b is set
 		for (int i = 0; i < 8; i++) {
@@ -145,7 +146,8 @@ class Encode{
 				p ^= a;
 			}
 			// keep track of a's high set
-			if (a < 0){
+			int set = a;
+			if (set > 0xFF){
 				aHighBitSet = true;
 			}
 			// rotate a by 1 to the left
