@@ -123,7 +123,7 @@ class Encode{
 		for(int row = 0; row < 4; row++){
 			result = 0;
 			for(int column = 0; column < 4; column++){
-				result += galiosMul((char)stateColumn[column], (char)mixColumnsMatrix[column][row]);
+				result += galiosMul((byte)stateColumn[column], (byte)mixColumnsMatrix[column][row]);
 				System.out.println("stateColumn[column] = " + String.format("%x",stateColumn[column]).toString());
 				System.out.println("mixColumnsMatrix[column][row] = " + String.format("%x",mixColumnsMatrix[column][row]).toString());
 				System.out.println("stateColumn["+row+"] +====" + String.format("%x",result).toString());
@@ -137,28 +137,43 @@ class Encode{
 		}
 	}
 
-	public static int galiosMul(char a, char b){
-		int p = 0;
+	public static byte galiosMul(byte a, byte b){
+		System.out.println("+++++++++++CALL WITH a = " + a + ", b = " + b);
+		byte p = 0;
+		boolean aHighBitSet = false;
 		// if low bit of b is set
 		for (int i = 0; i < 8; i++) {
-			boolean aHighBitSet = false;
+			// boolean aHighBitSet = false;
 			if ((b & 0x1) == 1) {
-				p ^= a;
+				p = (byte)(p ^ a);
 			}
 			// keep track of a's high set
-			int set = a;
-			if (set > 0xFF){
+			// int set = a;
+			// if (set > 0xFF){
+			// 	aHighBitSet = true;
+			// }
+			byte one = 1;
+			int andA = a & 0x80;
+			System.out.println("a & 0x80 = " + andA);
+			if (andA != 0){
+				System.out.println("==///////////////////set high bit");
 				aHighBitSet = true;
 			}
+			else
+				aHighBitSet = false;
 			// rotate a by 1 to the left
-			a <<= 1;
+			// a = (char)(a << one);
+			a = (byte)(a/2);
 			// XOR if a's high bit is set
 			if(aHighBitSet){
-				a ^= 0x1b;
+				a = (byte)(a ^ 0x1b);
 			}
 			// rotate b one bit to the right
-			b >>= 1;
+			// b = (char)(b >> one);
+			b = (byte)(b * 2);
+			System.out.println("p = " + p);
 		}
+		System.out.println("p = " + p);
 		return p;
 	}
 

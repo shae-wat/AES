@@ -97,10 +97,23 @@ class AES{
             //do appropriate number of rounds
             encode.subBytes();
             encode.shiftRows();
-            encode.mixColumns();
+            // encode.mixColumns();
             encode.addRoundKey(1);
-            int x = encode.galiosMul((char)0x7, (char)0x3);
-            System.out.println("x = " + x);
+            byte x1 = encode.galiosMul((byte)0xd4, (byte)0x2);
+            byte x2 = encode.galiosMul((byte)0xbf, (byte)0x1);
+            byte x3 = encode.galiosMul((byte)0x5d, (byte)0x1);
+            byte x4 = encode.galiosMul((byte)0x30, (byte)0x3);
+            byte result = (byte)(x1 ^ x2 ^ x3 ^ x4);
+            System.out.println("x = " + x1);
+            System.out.println("x = " + x2);
+            System.out.println("x = " + x3);
+            System.out.println("x = " + x4);
+            System.out.println("result = " + result);
+
+            Integer intT = new Integer(0xd4);
+            byte byteT = intT.byteValue();
+            System.out.println("intT = " + intT);
+            System.out.println("byteT = " + byteT);
         }
         //If option "d", inputFile is decrypted with a key from keyFile and output an encrypted file w extension ".dec"
         else {
