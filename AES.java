@@ -60,17 +60,17 @@ class AES{
 		
 		// array of plaintext
 		byte[][] stateArray = {
-			{(byte)0x32, (byte)0x88, (byte)0x31, (byte)0xe0},
-			{(byte)0x43, (byte)0x5a, (byte)0x31, (byte)0x37},
-			{(byte)0xf6, (byte)0x30, (byte)0x98, (byte)0x07},
-			{(byte)0xa8, (byte)0x8d, (byte)0xa2, (byte)0x34}
+			{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00},
+			{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00},
+			{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00},
+			{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00}
 		};
 
 		byte[][] invstateArray = {
-			{(byte)0x39, (byte)0x02, (byte)0xdc, (byte)0x19},
-			{(byte)0x25, (byte)0xdc, (byte)0x11, (byte)0x6a},
-			{(byte)0x84, (byte)0x09, (byte)0x85, (byte)0x0b},
-			{(byte)0x1d, (byte)0xfb, (byte)0x97, (byte)0x32}
+			{(byte)0x66, (byte)0xef, (byte)0x88, (byte)0xca},
+			{(byte)0xe9, (byte)0x8a, (byte)0x4c, (byte)0x34},
+			{(byte)0x4b, (byte)0x2c, (byte)0xfa, (byte)0x2b},
+			{(byte)0xd4, (byte)0x3b, (byte)0x59, (byte)0x2e}
 		};
 
 		// for (short[] arr : stateArray) {
@@ -87,17 +87,17 @@ class AES{
 		// 	}
 		// }
 		byte[][] keyArray = {
-			{(byte)0x2b, (byte)0x28, (byte)0xab, (byte)0x09},
-			{(byte)0x7e, (byte)0xae, (byte)0xf7, (byte)0xcf},
-			{(byte)0x15, (byte)0xd2, (byte)0x15, (byte)0x4f},
-			{(byte)0x16, (byte)0xa6, (byte)0x88, (byte)0x3c}
+			{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00},
+			{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00},
+			{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00},
+			{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00}
 		};
 
 		byte[][] invkeyArray = {
-			{(byte)0xd0, (byte)0xc9, (byte)0xe1, (byte)0xb6},
-			{(byte)0x14, (byte)0xee, (byte)0x3f, (byte)0x63},
-			{(byte)0xf9, (byte)0x25, (byte)0x0c, (byte)0x0c},
-			{(byte)0xa8, (byte)0x89, (byte)0xc8, (byte)0xa6}
+			{(byte)0xb4, (byte)0x3e, (byte)0x23, (byte)0x6f},
+			{(byte)0xef, (byte)0x92, (byte)0xe9, (byte)0x8f},
+			{(byte)0x5b, (byte)0xe2, (byte)0x51, (byte)0x18},
+			{(byte)0xcb, (byte)0x11, (byte)0xcf, (byte)0x8e}
 		};
 
 		//get keysize from terminal input
@@ -134,9 +134,24 @@ class AES{
             File decFile = new File(fName+".dec");
             Decode decode = new Decode(invstateArray, invkeyArray);
 
-            decode.invSubBytes();
-            decode.invShiftRows();
-            decode.invMixColumns();
+            //number of rounds depends on key size
+            if (keysize == 128){
+            	//use given cipher key for the initial round
+            	decode.invAddRoundKey(10);
+            	for(int round=9; round > 0; round--){
+            		System.out.println("-------------------round = " + round);
+            		//decode.invShiftRows();
+		            decode.invSubBytes();
+		            decode.invShiftRows();
+		            decode.invAddRoundKey(round);
+		            decode.invMixColumns();
+            	}
+            	System.out.println("-------------------round = 0");
+            	//decode.invShiftRows();
+	            decode.invSubBytes();
+	            decode.invShiftRows();
+	            decode.invAddRoundKey(0);
+            }
 
         }
 
