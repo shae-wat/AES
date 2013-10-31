@@ -110,10 +110,12 @@ class AES{
             System.out.println("x = " + x4);
             System.out.println("result = " + result);
 
-            Integer intT = new Integer(0xd4);
-            byte byteT = intT.byteValue();
+            int intT = 0xd4;//new Integer(0xd4);
+            byte byteT = (byte)intT;//intT.byteValue();
+            int intT2 = byteT;
             System.out.println("intT = " + intT);
             System.out.println("byteT = " + byteT);
+            System.out.println("intT2 = " + intT2);
         }
         //If option "d", inputFile is decrypted with a key from keyFile and output an encrypted file w extension ".dec"
         else {
