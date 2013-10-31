@@ -11,6 +11,7 @@ class AES{
 
 	public static File keyFile;
 	public static File inputFile;
+	public static int keysize;
 
 	//stuff from prev assignment
         //Encode encodeFile = new Encode(testText, encTestText, huffman, true);
@@ -85,58 +86,33 @@ class AES{
 			{(byte)0x16, (byte)0xa6, (byte)0x88, (byte)0x3c}
 		};
 
-        //If option "e", inputFile is encrypted with the key from keyFile and output an encrypted file w extension ".enc"
+		//get keysize from terminal input
+		keysize = 128;
+
+
+        //Encryption creates file with extension ".enc"
 		if (args[0].equals("e")){
-            System.out.println("\nargs[0] = " + args[0] + " = encrypt mode");
-            //encrypt = true;
+            System.out.println("\nargs[0] = " + args[0] + " = encrypt mode\n");
             File encFile = new File(fName+".enc");
             Encode encode = new Encode(stateArray, keyArray);
-            //use given cipher key
-            encode.addRoundKey(0);
 
-            //do appropriate number of rounds
-            encode.subBytes();
-            encode.shiftRows();
-            encode.mixColumn(0);
-            // String hexStr = String.format("%x",result).toString();
-            // System.out.println("result should be 0x04 = " + hexStr);
-            encode.addRoundKey(1);
-            // byte x1 = encode.galiosMul((byte)0xd4, (byte)0x2);
-            // byte x2 = encode.galiosMul((byte)0xbf, (byte)0x3);
-            // byte x3 = encode.galiosMul((byte)0x5d, (byte)0x1);
-            // byte x4 = encode.galiosMul((byte)0x30, (byte)0x1);
-            // byte result = (byte)(x1 ^ x2 ^ x3 ^ x4);
-// <<<<<<< HEAD
-//             System.out.println("x = " + x1);
-//             System.out.println("x = " + x2);
-//             System.out.println("x = " + x3);
-//             System.out.println("x = " + x4);
-//             System.out.println("result = " + result);
+            //number of rounds depends on key size
+            if (keysize == 128){
+            	//use given cipher key for the initial round
+            	encode.addRoundKey(0);
+            	for(int round=1; round < 10; round++){
+            		System.out.println("-------------------round = " + round);
+            		encode.subBytes();
+            		encode.shiftRows();
+            		encode.mixColumns();
+            		encode.addRoundKey(round);
+            	}
+            	System.out.println("-------------------round = 10");
+            	encode.subBytes();
+        		encode.shiftRows();
+        		encode.addRoundKey(10);
+            }
 
-//             int intT = 0xd4;//new Integer(0xd4);
-//             byte byteT = (byte)intT;//intT.byteValue();
-//             int intT2 = byteT;
-//             System.out.println("intT = " + intT);
-//             System.out.println("byteT = " + byteT);
-//             System.out.println("intT2 = " + intT2);
-// =======
-//             String hexStr = String.format("%x",result).toString();
-//             System.out.println("result should be 0x04 = " + hexStr);
-//             //System.out.println("x = " + x1);
-//             //System.out.println("x = " + x2);
-//             //System.out.println("x = " + x3);
-//             //System.out.println("x = " + x4);
-//             //System.out.println("result = " + result);
-
-//             byte x = encode.galiosMul((byte)0x07, (byte)0x03);
-//             String hexStrX = String.format("%x",x).toString();
-//             System.out.println("result should be 9 = " + hexStrX);
-
-//             // Integer intT = new Integer(0xd4);
-//             // byte byteT = intT.byteValue();
-//             // //System.out.println("intT = " + intT);
-//             // //System.out.println("byteT = " + byteT);
-// >>>>>>> 3d43efb23b0c8b349ad05810351f95878a0539d3
         }
         //If option "d", inputFile is decrypted with a key from keyFile and output an encrypted file w extension ".dec"
         else {

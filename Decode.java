@@ -37,6 +37,18 @@ class Decode{
 	public static void invMixColumns(){
 		System.out.println("invMixColumns!");
 	}
+	// public void invMixColumn(int c) { 
+	// 	byte a[] = new byte[4];
+
+	// 	// note that a is justateArray a copy of stateArray[.][c] 
+	// 	for (int i = 0; i < 4; i++) 
+	// 		a[i] = stateArray[i][c];
+
+	// 	stateArray[0][c] = (byte)(mul(0xE,a[0]) ^ mul(0xB,a[1]) ^ mul(0xD, a[2]) ^ mul(0x9,a[3])); 
+	// 	stateArray[1][c] = (byte)(mul(0xE,a[1]) ^ mul(0xB,a[2]) ^ mul(0xD, a[3]) ^ mul(0x9,a[0])); 
+	// 	stateArray[2][c] = (byte)(mul(0xE,a[2]) ^ mul(0xB,a[3]) ^ mul(0xD, a[0]) ^ mul(0x9,a[1])); 
+	// 	stateArray[3][c] = (byte)(mul(0xE,a[3]) ^ mul(0xB,a[0]) ^ mul(0xD, a[1]) ^ mul(0x9,a[2])); 
+	// } // invMixColumn2
 	public static void invAddRoundKey(){
 		System.out.println("invAddRoundKey!");
 	}
