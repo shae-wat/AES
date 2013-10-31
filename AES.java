@@ -97,13 +97,13 @@ class AES{
             //do appropriate number of rounds
             encode.subBytes();
             encode.shiftRows();
-            encode.mixColumns();
+            // encode.mixColumns();
             encode.addRoundKey(1);
-            byte x1 = encode.galiosMul((byte)0xd4, (byte)0x2);
-            byte x2 = encode.galiosMul((byte)0xbf, (byte)0x3);
-            byte x3 = encode.galiosMul((byte)0x5d, (byte)0x1);
-            byte x4 = encode.galiosMul((byte)0x30, (byte)0x1);
-            byte result = (byte)(x1 ^ x2 ^ x3 ^ x4);
+            // byte x1 = encode.galiosMul((byte)0xd4, (byte)0x2);
+            // byte x2 = encode.galiosMul((byte)0xbf, (byte)0x3);
+            // byte x3 = encode.galiosMul((byte)0x5d, (byte)0x1);
+            // byte x4 = encode.galiosMul((byte)0x30, (byte)0x1);
+            // byte result = (byte)(x1 ^ x2 ^ x3 ^ x4);
 // <<<<<<< HEAD
 //             System.out.println("x = " + x1);
 //             System.out.println("x = " + x2);
