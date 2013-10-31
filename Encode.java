@@ -27,7 +27,6 @@ class Encode{
 		{0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16}
 	}; 
 
-
 	//Constructor to encode this block of plaintext with this given cipherkey
 	Encode(byte[][] s, byte[][] k){
 		this.stateArray = s;
@@ -102,11 +101,6 @@ class Encode{
 		// multiply columns of state by the mixColumnsMatrix
 		//byte[] stateColumn = new byte[4];
 		for(int column = 0; column < 4; column++){
-			// get column
-			// for(int i = 0; i < 4; i++){
-			// 	stateColumn[i] = stateArray[i][column];
-			// }
-			// call matrixMul with this column
 			matrixMul(column);
 		}
 		printState();
