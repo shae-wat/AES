@@ -123,7 +123,7 @@ class Encode{
 		for(int row = 0; row < 4; row++){
 			result = 0;
 			for(int column = 0; column < 4; column++){
-				result ^= galiosMul((byte)stateColumn[column], (byte)mixColumnsMatrix[column][row]);
+				result ^= galiosMul((byte)stateColumn[column], (byte)mixColumnsMatrix[row][column]);
 				System.out.println("stateColumn[column] = " + String.format("%x",stateColumn[column]).toString());
 				System.out.println("mixColumnsMatrix[column][row] = " + String.format("%x",mixColumnsMatrix[column][row]).toString());
 				System.out.println("stateColumn["+row+"] +====" + String.format("%x",result).toString());
