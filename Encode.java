@@ -4,9 +4,9 @@ import java.lang.Math;
 class Encode{
 
 	//holds the current state of the block being encoded
-	public static int[][] stateArray;
+	public static byte[][] stateArray;
 	//holds the current version of the key to apply
-	public static int[][] keyArray;
+	public static byte[][] keyArray;
 
 	public static int[][] sBox = {
 		{0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76}, 
@@ -29,7 +29,7 @@ class Encode{
 
 
 	//Constructor to encode this block of plaintext with this given cipherkey
-	Encode(int[][] s, int[][] k){
+	Encode(byte[][] s, byte[][] k){
 		this.stateArray = s;
 		this.keyArray = k;
 		System.out.println("Encode!\n");
@@ -49,7 +49,7 @@ class Encode{
 				if (charLookup.length == 1){
 					//System.out.println("0 " + charLookup[0]);
 					int j = Character.getNumericValue(charLookup[0]);
-					stateArray[row][column] = sBox[0][j];
+					stateArray[row][column] = (byte)sBox[0][j];
 				}
 				else {
 					//System.out.println(charLookup[0] + " " + charLookup[1]);
@@ -57,7 +57,7 @@ class Encode{
 					int j = Character.getNumericValue(charLookup[1]);
 					//System.out.println("i = " + i + ", j = " + j);
 					//System.out.println("stateArray["+row+"]["+column+"] = " + String.format("%x",sBox[i][j]).toString());
-					stateArray[row][column] = sBox[i][j];
+					stateArray[row][column] = (byte)sBox[i][j];
 				}
 
 			}
@@ -70,7 +70,7 @@ class Encode{
 	//==================================shiftRows=====================
 	public static void shiftRows(){
 		int offset = 0;
-		int[] origRow = new int[4];
+		byte[] origRow = new byte[4];
 		int position;
 		for(int row = 0; row < 4; row++){
 			//collect original values of this row's columns
@@ -104,7 +104,7 @@ class Encode{
 	};
 	public static void mixColumns(){
 		// multiply columns of state by the mixColumnsMatrix
-		int[] stateColumn = new int[4];
+		byte[] stateColumn = new byte[4];
 		for(int column = 0; column < 4; column++){
 			// get column
 			for(int i = 0; i < 4; i++){
@@ -117,13 +117,13 @@ class Encode{
 		System.out.println("mixColumns!");
 	}
 
-	public static void matrixMul(int[] stateColumn, int columnNum){
-		int result;
+	public static void matrixMul(byte[] stateColumn, int columnNum){
+		byte result;
 		// row and column seem to be switched
 		for(int row = 0; row < 4; row++){
 			result = 0;
 			for(int column = 0; column < 4; column++){
-				result += galiosMul((byte)stateColumn[column], (byte)mixColumnsMatrix[column][row]);
+				result ^= galiosMul((byte)stateColumn[column], (byte)mixColumnsMatrix[row][column]);
 				System.out.println("stateColumn[column] = " + String.format("%x",stateColumn[column]).toString());
 				System.out.println("mixColumnsMatrix[column][row] = " + String.format("%x",mixColumnsMatrix[column][row]).toString());
 				System.out.println("stateColumn["+row+"] +====" + String.format("%x",result).toString());
@@ -137,51 +137,76 @@ class Encode{
 		}
 	}
 
-	public static byte galiosMul(byte a, byte b){
-		System.out.println("+++++++++++CALL WITH a = " + a + ", b = " + b);
-		byte p = 0;
-		boolean aHighBitSet = false;
-		// if low bit of b is set
-		for (int i = 0; i < 8; i++) {
-			// boolean aHighBitSet = false;
-			if ((b & 0x1) == 1) {
-				p = (byte)(p ^ a);
-			}
-			// keep track of a's high set
-			// int set = a;
-			// if (set > 0xFF){
-			// 	aHighBitSet = true;
-			// }
-			byte one = 1;
-			int andA = a & 0x80;
-			System.out.println("a & 0x80 = " + andA);
-			if (andA != 0){
-				System.out.println("==///////////////////set high bit");
-				aHighBitSet = true;
-			}
-			else
-				aHighBitSet = false;
-			// rotate a by 1 to the left
-			// a = (char)(a << one);
-			a = (byte)(a/2);
-			// XOR if a's high bit is set
-			if(aHighBitSet){
-				a = (byte)(a ^ 0x1b);
-			}
-			// rotate b one bit to the right
-			// b = (char)(b >> one);
-			b = (byte)(b * 2);
-			System.out.println("p = " + p);
-		}
-		System.out.println("p = " + p);
-		return p;
-	}
+	// public static byte galiosMul(byte a, byte b){
+	// 	//System.out.println("+++++++++++CALL WITH a = " + a + ", b = " + b);
+	// 	byte p = 0;
+	// 	boolean aHighBitSet = false;
+	// 	// if low bit of b is set
+	// 	for (int i = 0; i < 8; i++) {
+	// 		// boolean aHighBitSet = false;
+	// 		if ((b & 0x1) == 1) {
+	// 			p = (byte)(p ^ a);
+	// 		}
+	// 		// keep track of a's high set
+	// 		// int set = a;
+	// 		// if (set > 0xFF){
+	// 		// 	aHighBitSet = true;
+	// 		// }
+	// 		byte one = 1;
+	// 		int andA = a & 0x80;
+	// 		//System.out.println("a & 0x80 = " + andA);
+	// 		if (andA != 0){
+	// 			//System.out.println("==///////////////////set high bit");
+	// 			aHighBitSet = true;
+	// 		}
+	// 		else
+	// 			aHighBitSet = false;
+	// 		// rotate a by 1 to the left
+	// 		// a = (char)(a << one);
+	// 		a = (byte)(a/2);
+	// 		// XOR if a's high bit is set
+	// 		if(aHighBitSet){
+	// 			a = (byte)(a ^ 0x1b);
+	// 		}
+	// 		// rotate b one bit to the right
+	// 		// b = (char)(b >> one);
+	// 		b = (byte)(b * 2);
+	// 		//System.out.println("p = " + p);
+	// 	}
+	// 	//System.out.println("p = " + p);
+	// 	return p;
+	// }
+
+    public static byte galiosMul(byte a, byte b){
+        byte p = 0;
+        // if low bit of b is set
+        for (int i = 0; i < 8; i++) {
+            boolean aHighBitSet = false;
+            if ((b & 0x1) == 1) {
+                    p ^= a;
+            }
+            // keep track of a's high set
+            int set = a;
+            if (set > 0xFF){
+                    aHighBitSet = true;
+            }
+            // rotate a by 1 to the left
+            a <<= 1;
+            // XOR if a's high bit is set
+            if(aHighBitSet){
+                    a ^= 0x1b;
+            }
+            // rotate b one bit to the right
+            b >>= 1;
+        }
+        return p;
+    }
 
 	//==================================addRoundKey=====================
 	public static void addRoundKey(int round){
 
-		printKey();
-		System.out.println("key before modification\n");
+		// printKey();
+		// System.out.println("key before modification\n");
 
 		//Update the keyArray after using original cipher
 		if(round != 0)
@@ -192,10 +217,12 @@ class Encode{
 			//Get column of interest from both key and state
 			for(int row = 0; row < 4; row++){
 				//XOR the current columns
-				stateArray[row][column] = stateArray[row][column] ^ keyArray[row][column];
+				stateArray[row][column] = (byte)(stateArray[row][column] ^ keyArray[row][column]);
 				//System.out.println("result["+row+"]["+column+"] = " + String.format("%x",stateArray[row][column]).toString());
 			}
 		}
+		printKey();
+		System.out.println("key applied\n");
 		printState();
 		System.out.println("addRoundKey!\n");
 	}
@@ -214,8 +241,8 @@ class Encode{
 	public static void nextRoundKey(int round){
 
 		//make first column of next round key
-		int[] prevFirstCol = new int[4];
-		int[] prevLastCol = new int[4];
+		byte[] prevFirstCol = new byte[4];
+		byte[] prevLastCol = new byte[4];
 		for (int column= 0; column < 4; column++){
 			prevFirstCol[column] = keyArray[column][0];
 			prevLastCol[column] =keyArray[column][3]; 	
@@ -226,18 +253,18 @@ class Encode{
 		for (int column = 1; column < 4; column++){
 			for (int row = 0; row < 4; row++){
 				//XOR prev column of the key in process of being generated & prev key's row to be replaced
-				keyArray[row][column] = keyArray[row][column-1] ^ keyArray[row][column];
+				keyArray[row][column] = (byte)(keyArray[row][column-1] ^ keyArray[row][column]);
 			}
 		}
 
-		printKey();
-		System.out.println("key generated after nextRoundKey\n");
+		//printKey();
+		//System.out.println("key generated after nextRoundKey\n");
 
 
 	}
 
-	public static void makeFirstColumn(int[] prevFirstCol, int[] prevLastCol, int round){
-		int[] rotWord = new int[4];
+	public static void makeFirstColumn(byte[] prevFirstCol, byte[] prevLastCol, int round){
+		byte[] rotWord = new byte[4];
 
 		//rotate last column of previous key to create RotWord
 		for(int i = 0; i < 4; i++){
@@ -256,7 +283,7 @@ class Encode{
 			if (charLookup.length == 1){
 				//System.out.println("0 " + charLookup[0]);
 				int j = Character.getNumericValue(charLookup[0]);
-				rotWord[k] = sBox[0][j];
+				rotWord[k] = (byte)sBox[0][j];
 			}
 			else {
 				//System.out.println(charLookup[0] + " " + charLookup[1]);
@@ -264,13 +291,13 @@ class Encode{
 				int j = Character.getNumericValue(charLookup[1]);
 				//System.out.println("i = " + i + ", j = " + j);
 				//System.out.println("rotWord["+k+"] = " + String.format("%x",sBox[i][j]).toString());
-				rotWord[k] = sBox[i][j];
+				rotWord[k] = (byte)sBox[i][j];
 			}
 		}
 
 		// XOR first column of previous key & Rotword & Rcon
 		for(int k = 0; k < 4; k++){
-			keyArray[k][round-1] = prevFirstCol[k] ^ rotWord[k] ^ rCon[k][round-1];
+			keyArray[k][round-1] = (byte)(prevFirstCol[k] ^ rotWord[k] ^ rCon[k][round-1]);
 			//System.out.println("XOR first column of previous key & Rotword & Rcon\nkeyArray["+k+"]["+(round-1)+"] = " + String.format("%x",keyArray[k][(round-1)]).toString());
 		}
 	}
