@@ -119,7 +119,7 @@ class Encode{
 	// array of bytes. If your state is an array of integers, you'll have 
 	// to make adjustments.
 
-	public void mixColumn2 (int c) { 
+	public void mixColumn(int c) { 
 	// This is another alternate version of mixColumn, using the 
 	// logtables to do the computation.
 
@@ -137,7 +137,7 @@ class Encode{
 		stateArray[3][c] = (byte)(mul(2,a[3]) ^ a[1] ^ a[2] ^ mul(3,a[0])); 
 	} // mixColumn2
 
-	public void invMixColumn2 (int c) { 
+	public void invMixColumn(int c) { 
 		byte a[] = new byte[4];
 
 		// note that a is justateArray a copy of stateArray[.][c] 

@@ -97,7 +97,9 @@ class AES{
             //do appropriate number of rounds
             encode.subBytes();
             encode.shiftRows();
-            // encode.mixColumns();
+            encode.mixColumn(0);
+            // String hexStr = String.format("%x",result).toString();
+            // System.out.println("result should be 0x04 = " + hexStr);
             encode.addRoundKey(1);
             // byte x1 = encode.galiosMul((byte)0xd4, (byte)0x2);
             // byte x2 = encode.galiosMul((byte)0xbf, (byte)0x3);
