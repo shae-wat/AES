@@ -152,7 +152,15 @@ class Decode{
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	};
 
+	public static int[][] invRCon = {
+		{0x36, 0x1b, 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	};
+
 	public static void nextRoundKey(int round){
+
 
 
 		//generate the new key's columns after the first column
@@ -163,24 +171,43 @@ class Decode{
 			}
 		}
 
-		//make first column of next round key
-		byte[] prevFirstCol = new byte[4];
+		//store current first and last columns
+		byte[] currentFirstCol = new byte[4];
 		byte[] prevLastCol = new byte[4];
 		for (int column= 0; column < 4; column++){
-			prevFirstCol[column] = keyArray[column][0];
+			currentFirstCol[column] = keyArray[column][0];
 			prevLastCol[column] =keyArray[column][3]; 	
 		}
-		makeFirstColumn(prevFirstCol, prevLastCol, round);
-
-		//printKey();
-		//System.out.println("key generated after nextRoundKey\n");
+		// printIntArr(prevFirstCol);
+		// System.out.println("prevFirstCol");
+		// printIntArr(prevLastCol);
+		// System.out.println("prevLastCol");
+		makeFirstColumn(currentFirstCol, prevLastCol, round);
 
 
 	}
 
-	public static void makeFirstColumn(byte[] prevFirstCol, byte[] prevLastCol, int round){
+	public static void makeFirstColumn(byte[] currentFirstCol, byte[] prevLastCol, int round){
 		byte[] rotWord = new byte[4];
+		Encode e = new Encode(stateArray, keyArray);
 
+		//reverse rotation
+		for(int i = 0; i < 4; i++){
+
+			rotWord[i] = prevLastCol[i];
+		}
+		//printIntArr(rotWord);
+		//System.out.println("rot word taken from last line of already XORed array");
+
+		//reverse rotation
+		for(int i = 0; i < 4; i++){
+			if(i==3)
+				rotWord[i] = prevLastCol[0];
+			else
+				rotWord[i] = prevLastCol[i+1];
+		}
+		//printIntArr(rotWord);
+		//System.out.println("rot word after inverse shift");
 
 		//subBytes of the RotWord with the s-box
 		for(int k = 0; k < 4; k++){
@@ -190,27 +217,23 @@ class Decode{
 			//Lookup
 			if (charLookup.length == 1){
 				int j = Character.getNumericValue(charLookup[0]);
-				rotWord[k] = (byte)invSBox[0][j];
+				rotWord[k] = (byte)e.sBox[0][j];
 			}
 			else {
 				int i = Character.getNumericValue(charLookup[0]);
 				int j = Character.getNumericValue(charLookup[1]);
-				rotWord[k] = (byte)invSBox[i][j];
+				rotWord[k] = (byte)e.sBox[i][j];
 			}
 		}
+		//printIntArr(rotWord);
+		//System.out.println("rot word after sub");
 
-		//*****rotate last column of previous key to create RotWord
-		for(int i = 0; i < 4; i++){
-			if(i==0)
-				rotWord[i] = prevLastCol[3];
-			else
-				rotWord[i] = prevLastCol[i-1];
-		}
+
 
 		// XOR first column of previous key & Rotword & Rcon****going backwards
 		for(int k = 0; k < 4; k++){
-			keyArray[k][0] = (byte)(prevFirstCol[k] ^ rotWord[k] ^ rCon[k][round]);
-			//System.out.println("XOR first column of previous key & Rotword & Rcon\nkeyArray["+k+"]["+(round-1)+"] = " + String.format("%x",keyArray[k][(round-1)]).toString());
+			keyArray[k][0] = (byte)(currentFirstCol[k] ^ rotWord[k] ^ invRCon[k][round]);
+			//System.out.println("XOR first column of current key & Rotword & Rcon\nkeyArray["+k+"][0] = " + String.format("%x",keyArray[k][0]).toString());
 		}
 	}
 
@@ -234,7 +257,7 @@ class Decode{
 			System.out.println("");
 		}
 	}
-	public static void printIntArr(int[] ia){
+	public static void printIntArr(byte[] ia){
 		for (int i = 0; i < ia.length; i++){
 			String hexStr = String.format("%x",ia[i]).toString();
 			System.out.print(hexStr + " ");
