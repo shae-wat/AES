@@ -38,25 +38,19 @@ class Decode{
 	public static void invSubBytes(){
 		for(int row = 0; row < 4; row++){
 			for(int column = 0; column < 4; column++){
-
 				String hexStr = String.format("%x",stateArray[row][column]).toString();
 				//System.out.println("hexstr = " + hexStr);
 				char[] charLookup = hexStr.toCharArray();
 				//Lookup
 				if (charLookup.length == 1){
-					//System.out.println("0 " + charLookup[0]);
 					int j = Character.getNumericValue(charLookup[0]);
 					stateArray[row][column] = (byte)invSBox[0][j];
 				}
 				else {
-					//System.out.println(charLookup[0] + " " + charLookup[1]);
 					int i = Character.getNumericValue(charLookup[0]);
 					int j = Character.getNumericValue(charLookup[1]);
-					//System.out.println("i = " + i + ", j = " + j);
-					//System.out.println("stateArray["+row+"]["+column+"] = " + String.format("%x",sBox[i][j]).toString());
 					stateArray[row][column] = (byte)invSBox[i][j];
 				}
-
 			}
 		}
 		printState();
@@ -93,7 +87,7 @@ class Decode{
 	final static int[] AlogTable = { 1, 3, 5, 15, 17, 51, 85, 255, 26, 46, 114, 150, 161, 248, 19, 53, 95, 225, 56, 72, 216, 115, 149, 164, 247, 2, 6, 10, 30, 34, 102, 170, 229, 52, 92, 228, 55, 89, 235, 38, 106, 190, 217, 112, 144, 171, 230, 49, 83, 245, 4, 12, 20, 60, 68, 204, 79, 209, 104, 184, 211, 110, 178, 205, 76, 212, 103, 169, 224, 59, 77, 215, 98, 166, 241, 8, 24, 40, 120, 136, 131, 158, 185, 208, 107, 189, 220, 127, 129, 152, 179, 206, 73, 219, 118, 154, 181, 196, 87, 249, 16, 48, 80, 240, 11, 29, 39, 105, 187, 214, 97, 163, 254, 25, 43, 125, 135, 146, 173, 236, 47, 113, 147, 174, 233, 32, 96, 160, 251, 22, 58, 78, 210, 109, 183, 194, 93, 231, 50, 86, 250, 21, 63, 65, 195, 94, 226, 61, 71, 201, 64, 192, 91, 237, 44, 116, 156, 191, 218, 117, 159, 186, 213, 100, 172, 239, 42, 126, 130, 157, 188, 223, 122, 142, 137, 128, 155, 182, 193, 88, 232, 35, 101, 175, 234, 37, 111, 177, 200, 67, 197, 84, 252, 31, 33, 99, 165, 244, 7, 9, 27, 45, 119, 153, 176, 203, 70, 202, 69, 207, 74, 222, 121, 139, 134, 145, 168, 227, 62, 66, 198, 81, 243, 14, 18, 54, 90, 238, 41, 123, 141, 140, 143, 138, 133, 148, 167, 242, 13, 23, 57, 75, 221, 124, 132, 151, 162, 253, 28, 36, 108, 180, 199, 82, 246, 1};
 
 	public static void invMixColumns(){
-		//***go through columns in this order?
+		//******go through columns in this order?
 		for(int column = 0; column < 4; column++){
 			invMatrixMul(column);
 		}
@@ -160,6 +154,15 @@ class Decode{
 
 	public static void nextRoundKey(int round){
 
+
+		//generate the new key's columns after the first column
+		for (int column = 3; column > 0; column--){
+			for (int row = 0; row < 4; row++){
+				//XOR prev column of the key in process of being generated & prev key's row to be replaced
+				keyArray[row][column] = (byte)(keyArray[row][column-1] ^ keyArray[row][column]);
+			}
+		}
+
 		//make first column of next round key
 		byte[] prevFirstCol = new byte[4];
 		byte[] prevLastCol = new byte[4];
@@ -168,14 +171,6 @@ class Decode{
 			prevLastCol[column] =keyArray[column][3]; 	
 		}
 		makeFirstColumn(prevFirstCol, prevLastCol, round);
-
-		//generate rest of the new key's columns
-		for (int column = 1; column < 4; column++){
-			for (int row = 0; row < 4; row++){
-				//XOR prev column of the key in process of being generated & prev key's row to be replaced
-				keyArray[row][column] = (byte)(keyArray[row][column-1] ^ keyArray[row][column]);
-			}
-		}
 
 		//printKey();
 		//System.out.println("key generated after nextRoundKey\n");
@@ -186,13 +181,6 @@ class Decode{
 	public static void makeFirstColumn(byte[] prevFirstCol, byte[] prevLastCol, int round){
 		byte[] rotWord = new byte[4];
 
-		//rotate last column of previous key to create RotWord
-		for(int i = 0; i < 4; i++){
-			if(i==3)
-				rotWord[i] = prevLastCol[0];
-			else
-				rotWord[i] = prevLastCol[i + 1];
-		}
 
 		//subBytes of the RotWord with the s-box
 		for(int k = 0; k < 4; k++){
@@ -201,21 +189,25 @@ class Decode{
 			char[] charLookup = hexStr.toCharArray();
 			//Lookup
 			if (charLookup.length == 1){
-				//System.out.println("0 " + charLookup[0]);
 				int j = Character.getNumericValue(charLookup[0]);
 				rotWord[k] = (byte)invSBox[0][j];
 			}
 			else {
-				//System.out.println(charLookup[0] + " " + charLookup[1]);
 				int i = Character.getNumericValue(charLookup[0]);
 				int j = Character.getNumericValue(charLookup[1]);
-				//System.out.println("i = " + i + ", j = " + j);
-				//System.out.println("rotWord["+k+"] = " + String.format("%x",sBox[i][j]).toString());
 				rotWord[k] = (byte)invSBox[i][j];
 			}
 		}
 
-		// XOR first column of previous key & Rotword & Rcon
+		//*****rotate last column of previous key to create RotWord
+		for(int i = 0; i < 4; i++){
+			if(i==0)
+				rotWord[i] = prevLastCol[3];
+			else
+				rotWord[i] = prevLastCol[i-1];
+		}
+
+		// XOR first column of previous key & Rotword & Rcon****going backwards
 		for(int k = 0; k < 4; k++){
 			keyArray[k][0] = (byte)(prevFirstCol[k] ^ rotWord[k] ^ rCon[k][round]);
 			//System.out.println("XOR first column of previous key & Rotword & Rcon\nkeyArray["+k+"]["+(round-1)+"] = " + String.format("%x",keyArray[k][(round-1)]).toString());

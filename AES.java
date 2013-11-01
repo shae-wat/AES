@@ -153,6 +153,9 @@ class AES{
 	            decode.invAddRoundKey(0);
             }
 
+            byte x = (byte)(0xa0 ^ 0x01 ^ 0x8a);
+            System.out.println("inverse XOR = " + String.format("%x",x).toString());
+
         }
 
         
