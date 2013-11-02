@@ -61,6 +61,16 @@ class KeySchedule{
 		System.out.println("KeySchedule!\n");
 	}
 
+	//encode function
+	public static void encodeNextKey(){
+		//get increasing columns
+	}
+
+	//decode function
+	public static void decodeNextKey(){
+		//get decreasing columns
+	}
+
 	//adds the 4x4 key array to the appropriate place in the expandedKeyArray
 	public static void addKey(int round){
 		int offset;
