@@ -40,20 +40,18 @@ class KeySchedule{
 		this.keyArray = k;
 		
 		for(int i=0; i < 4; i++){
-			//fill first four columns
+			//fill first four columns with given cipherkey
 			for(int j=0; j < 4; j++){
 				this.expandedKeyArray[i][j] = k[i][j];
 			}
 			printKey();
 			System.out.println("initial key");
-			//generate rest of the columns
-			int round = 1;
-			for(int j=4; j < 11; j++){
+			//generate rest of the round keys
+			for(int round=1; round <= 10; round++){
 				nextRoundKey(round);
 				addKey(round);
 				printKey();
 				System.out.println("round"+round+" key");
-				round++;
 			}
 		}
 
@@ -72,13 +70,30 @@ class KeySchedule{
 	}
 
 	//adds the 4x4 key array to the appropriate place in the expandedKeyArray
+	// expandedKeyArray[0][4] = 
+	// expandedKeyArray[0][5] = 
+	// expandedKeyArray[0][6] = 
+	// expandedKeyArray[0][7] = 
+	// expandedKeyArray[1][4] = 
+	// expandedKeyArray[1][5] = 
+	// expandedKeyArray[1][6] = 
+	// expandedKeyArray[1][7] = 
+	// expandedKeyArray[2][4] = 
+	// expandedKeyArray[2][5] = 
+	// expandedKeyArray[2][6] = 
+	// expandedKeyArray[2][7] = 
+	// expandedKeyArray[3][4] = 
+	// expandedKeyArray[3][5] = 
+	// expandedKeyArray[3][6] = 
+	// expandedKeyArray[3][7] = 
+
 	public static void addKey(int round){
 		int offset;
 		for(int j=0; j < 4; j++){
 			for(int jj=0; jj < 4; jj++){
 				offset =jj+(4*round);
-				//expandedKeyArray[j][offset] = keyArray[j][offset];
-				System.out.println("expandedKeyArray["+j+"]["+offset+"] = ");// + expandedKeyArray[(j+(4*round))][jj]);
+				//expandedKeyArray[j][offset] = keyArray[j][jj];
+				System.out.println("expandedKeyArray["+j+"]["+offset+"] = " + String.format("%x",expandedKeyArray[j][jj]).toString());
 			}
 		}
 	}
