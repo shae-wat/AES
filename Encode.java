@@ -61,8 +61,8 @@ class Encode{
 
 			}
 		}
-		printState();
-		System.out.println("SubBytes!\n");
+		//printState();
+		//System.out.println("SubBytes!\n");
 	}
 
 
@@ -89,8 +89,8 @@ class Encode{
 			//offset is incremented after each row
 			offset++;
 		}
-		printState();
-		System.out.println("ShiftRows!\n");
+		//printState();
+		//System.out.println("ShiftRows!\n");
 	}
 
 	//==================================mixColumns=====================
@@ -103,8 +103,8 @@ class Encode{
 		for(int column = 0; column < 4; column++){
 			matrixMul(column);
 		}
-		printState();
-		System.out.println("mixColumns!\n");
+		//printState();
+		//System.out.println("mixColumns!\n");
 	}
 
 	private static byte mul (int a, byte b) { 
@@ -155,10 +155,10 @@ class Encode{
 				//System.out.println("result["+row+"]["+column+"] = " + String.format("%x",stateArray[row][column]).toString());
 			}
 		}
-		printKey();
-		System.out.println("key applied\n");
-		printState();
-		System.out.println("addRoundKey!\n");
+		//printKey();
+		//System.out.println("key applied\n");
+		//printState();
+		//System.out.println("addRoundKey!\n");
 	}
 
 

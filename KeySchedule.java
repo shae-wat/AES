@@ -4,7 +4,9 @@ import java.lang.Math;
 class KeySchedule{
 
 	//full key array 4x44
-	public static byte[][] keyArray = new byte[4][44];
+	public static byte[][] expandedKeyArray = new byte[4][44];
+	//4x4 key array for easy implementation
+	public static byte[][] keyArray;
 
 	public static int[][] rCon = {
 		{0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36},
@@ -34,37 +36,56 @@ class KeySchedule{
 
 	//Constructor to encode this block of plaintext with this given cipherkey
 	KeySchedule(byte[][] k){
+
+		this.keyArray = k;
 		
 		for(int i=0; i < 4; i++){
 			//fill first four columns
 			for(int j=0; j < 4; j++){
-				this.keyArray[i][j] = k[i][j];
+				this.expandedKeyArray[i][j] = k[i][j];
 			}
+			printKey();
+			System.out.println("initial key");
 			//generate rest of the columns
 			int round = 1;
 			for(int j=4; j < 11; j++){
-				nextRoundKey(j, round);
+				nextRoundKey(round);
+				addKey(round);
+				printKey();
+				System.out.println("round"+round+" key");
 				round++;
 			}
 		}
 
-		printKey();
+		//printKey();
 		System.out.println("KeySchedule!\n");
 	}
 
-	public static void nextRoundKey(int col, int round){
+	//adds the 4x4 key array to the appropriate place in the expandedKeyArray
+	public static void addKey(int round){
+		int offset;
+		for(int j=0; j < 4; j++){
+			for(int jj=0; jj < 4; jj++){
+				offset =jj+(4*round);
+				//expandedKeyArray[j][offset] = keyArray[j][offset];
+				System.out.println("expandedKeyArray["+j+"]["+offset+"] = ");// + expandedKeyArray[(j+(4*round))][jj]);
+			}
+		}
+	}
+
+	public static void nextRoundKey(int round){
 
 		//make first column of next round key
 		byte[] prevFirstCol = new byte[4];
 		byte[] prevLastCol = new byte[4];
 		for (int column= 0; column < 4; column++){
-			prevFirstCol[column] = keyArray[column][0+col];
-			prevLastCol[column] =keyArray[column][3+col]; 	
+			prevFirstCol[column] = keyArray[column][0];
+			prevLastCol[column] =keyArray[column][3]; 	
 		}
 		makeFirstColumn(prevFirstCol, prevLastCol, round);
 
 		//generate rest of the new key's columns
-		for (int column = 1+col; column < 4+col; column++){
+		for (int column = 1; column < 4; column++){
 			for (int row = 0; row < 4; row++){
 				//XOR prev column of the key in process of being generated & prev key's row to be replaced
 				keyArray[row][column] = (byte)(keyArray[row][column-1] ^ keyArray[row][column]);
