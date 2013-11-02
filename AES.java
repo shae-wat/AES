@@ -116,12 +116,13 @@ class AES{
 
 		//get keysize from terminal input
 		keysize = 128;
+		KeySchedule expandedKey = new KeySchedule(keyArray);
 
 
         //Encryption creates file with extension ".enc"
 		if (args[0].equals("e")){
             System.out.println("\nargs[0] = " + args[0] + " = encrypt mode\n");
-            File encFile = new File(fName+".enc");
+            File encFile = new File(fName+".enc");	          
             Encode encode = new Encode(stateArray, keyArray);
 
             //number of rounds depends on key size
