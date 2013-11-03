@@ -155,7 +155,7 @@ class Encode{
 			}
 		}
 		printKey();
-		System.out.println("key applied in add round key\n");
+		System.out.println("key applied\n");
 		printState();
 		System.out.println("addRoundKey!\n");
 	}

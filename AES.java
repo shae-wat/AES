@@ -42,7 +42,7 @@ class AES{
 
 		Scanner inputText = new Scanner(new FileReader(inputFile));
 		//line taken from inputText
-		String pt;
+		String line;
 		//128-byte block to fill
 		byte[][] stateArray = new byte[4][4];
 
@@ -60,87 +60,94 @@ class AES{
 		KeySchedule keySchedule = new KeySchedule(keyArray);
 		
 		while(inputText.hasNextLine()){
-			pt = inputText.nextLine();
-			System.out.println("next line of file = " + pt +"\n\n");
-			//scanner for this line fo plaintext
-			Scanner plaintext = new Scanner(pt);
-
-			int byteCounter = 0;
-
-			//create new instance of stateArray to send thrgh AES
-			for(int row = 0; row < 4; row++){
-		 		for(int column = 0; column < 4; column++){
-		 			if(plaintext.hasNextByte()){
-		 				stateArray[row][column] = plaintext.nextByte();
-		 				System.out.println("HASNEXT stateArray["+row+"]["+column+"] = " + stateArray[row][column]);
-	 				}
-	 				//pad to the right with zeros
-	 				else{
-	 					stateArray[row][column] = 0;
-	 				}
-		 			//System.out.println("stateArray["+row+"]["+column+"] = " + stateArray[row][column]);
-		 		}
-		 	}
-
-		 	//Encryption with the newly created stateArray
-			if (args[0].equals("e")){          
-	            Encode encode = new Encode(stateArray, keySchedule);
-
-	            //number of rounds depends on key size
-	            if (keysize == 128){
-	            	//use given cipher key for the initial round
-	            	encode.addRoundKey(0);
-	            	for(int round=1; round < 10; round++){
-	            		System.out.println("-------------------round = " + round);
-	            		encode.subBytes();
-	            		encode.shiftRows();
-	            		encode.mixColumns();
-	            		encode.addRoundKey(round);
-	            	}
-	            	System.out.println("-------------------round = 10");
-	            	encode.subBytes();
-	        		encode.shiftRows();
-	        		encode.addRoundKey(10);
-	            }
-
-	        }
-	        //Decryption with the newly created stateArray
-	        else {
-	        	System.out.println("\nargs[0] = " + args[0] + " = decrypt mode");
-	            File decFile = new File(fName+".dec");
-	            Decode decode = new Decode(stateArray, keySchedule);
-
-	            //number of rounds depends on key size
-	            if (keysize == 128){
-	            	//use given cipher key for the initial round
-	            	decode.invAddRoundKey(10);
-	            	for(int round=9; round > 0; round--){
-	            		System.out.println("-------------------round = " + round);
-			            decode.invShiftRows();
-			            decode.invSubBytes();
-			            decode.invAddRoundKey(round);
-			            decode.invMixColumns();
-	            	}
-	            	System.out.println("-------------------round = 0");
-	            	decode.invShiftRows();
-		            decode.invSubBytes();
-		            decode.invAddRoundKey(0);
-	            }
-	        }
-
+			line = inputText.nextLine();
+			System.out.println("\n\nnext line of file = " + line +"\n");
+			if(line.length() == 32){
 			
+				// int byteCounter = 0;
 
-
-			for(int row = 0; row < 4; row++){
-				for(int column = 0; column < 4; column++){
-					String hexStr = String.format("%x",stateArray[row][column]).toString();
-					System.out.print(hexStr + " ");
+				// //create new instance of stateArray to send thrgh AES
+				// for(int row = 0; row < 4; row++){
+			 // 		for(int column = 0; column < 4; column++){
+			 			
+			 // 			stateArray[row][column] = (byte)pt.charAt(byteCounter);
+			 // 			System.out.println("HASNEXT stateArray["+row+"]["+column+"] = pt.charAt("+(byteCounter) +" = " + String.format("%x",(byte)pt.charAt(byteCounter)).toString());
+		 	// 			//pad to the right with zeros
+		 	// 			// else{
+		 	// 			// 	stateArray[row][column] = 0;
+		 	// 			// }
+			 // 			//System.out.println("stateArray["+row+"]["+column+"] = " + stateArray[row][column]);
+		 	// 			byteCounter++;
+			 // 		}
+			 // 	}
+				int counter = 0;
+				for(int row = 0; row < 4; row++){
+					for(int column = 0; column < 4; column++){
+						char val1 = line.charAt(counter);
+						char val2 = line.charAt(counter + 1);
+						String strByte = val1 + "" + val2;
+						stateArray[row][column] = (byte) (Integer.parseInt(strByte,16));
+						// stateArray[row][column] = bytesFromString[counter];
+						//System.out.println(stateArray[row][column] & 0xff);
+						counter += 2;
+					}
 				}
-				System.out.println("");
-			}
-			System.out.println("stateArray with one line input");
 
+				for(int row = 0; row < 4; row++){
+					for(int column = 0; column < 4; column++){
+						String hexStr = String.format("%x",stateArray[row][column]).toString();
+						System.out.print(hexStr + " ");
+					}
+					System.out.println("");
+				}
+			System.out.println("stateArray of this line's input");
 
+			 	//Encryption with the newly created stateArray
+				if (args[0].equals("e")){          
+		            Encode encode = new Encode(stateArray, keySchedule);
+
+		            //number of rounds depends on key size
+		            if (keysize == 128){
+		            	//use given cipher key for the initial round
+		            	encode.addRoundKey(0);
+		            	for(int round=1; round < 10; round++){
+		            		System.out.println("-------------------round = " + round);
+		            		encode.subBytes();
+		            		encode.shiftRows();
+		            		encode.mixColumns();
+		            		encode.addRoundKey(round);
+		            	}
+		            	System.out.println("-------------------round = 10");
+		            	encode.subBytes();
+		        		encode.shiftRows();
+		        		encode.addRoundKey(10);
+		            }
+
+		        }
+		        //Decryption with the newly created stateArray
+		        else {
+		        	System.out.println("\nargs[0] = " + args[0] + " = decrypt mode");
+		            File decFile = new File(fName+".dec");
+		            Decode decode = new Decode(stateArray, keySchedule);
+
+		            //number of rounds depends on key size
+		            if (keysize == 128){
+		            	//use given cipher key for the initial round
+		            	decode.invAddRoundKey(10);
+		            	for(int round=9; round > 0; round--){
+		            		System.out.println("-------------------round = " + round);
+				            decode.invShiftRows();
+				            decode.invSubBytes();
+				            decode.invAddRoundKey(round);
+				            decode.invMixColumns();
+		            	}
+		            	System.out.println("-------------------round = 0");
+		            	decode.invShiftRows();
+			            decode.invSubBytes();
+			            decode.invAddRoundKey(0);
+		            }
+		        }
+	        }
 	        
 
 			System.out.println("\nAES!");
