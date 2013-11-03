@@ -82,11 +82,11 @@ class KeySchedule{
 			for(int jj=0; jj < 4; jj++){
 				offset =jj+(4*round);
 				keyArray[j][jj] = expandedKeyArray[j][offset];
-				System.out.println("decodeNextKey: keyArray["+j+"]["+jj+"] = " + String.format("%x",expandedKeyArray[j][offset]).toString());
+				//System.out.println("decodeNextKey: keyArray["+j+"]["+jj+"] = " + String.format("%x",expandedKeyArray[j][offset]).toString());
 			}
 		}
 
-		System.out.println("decodeNextKey()\n");
+		//System.out.println("decodeNextKey()\n");
 		return keyArray;
 	}
 

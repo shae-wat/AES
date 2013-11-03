@@ -33,7 +33,7 @@ class Decode{
 	Decode(byte[][] s, byte[][] k){
 		this.stateArray = s;
 		key = new KeySchedule(k);
-		System.out.println("Decode!");
+		System.out.println("Decode!\n\n");
 	}
 
 	//==================================invSubBytes=====================
@@ -55,7 +55,7 @@ class Decode{
 				}
 			}
 		}
-		//printState();
+		printState();
 		System.out.println("invSubBytes!\n");
 	}
 
@@ -79,7 +79,7 @@ class Decode{
 			//offset is incremented after each row
 			offset++;
 		}
-		//printState();
+		printState();
 		System.out.println("invShiftRows!\n");
 	}
 

@@ -33,7 +33,7 @@ class Encode{
 	Encode(byte[][] s, byte[][] k){
 		this.stateArray = s;
 		key = new KeySchedule(k);
-		System.out.println("Encode!\n");
+		System.out.println("Encode!\n\n");
 	}
 
 
@@ -63,7 +63,7 @@ class Encode{
 
 			}
 		}
-		//printState();
+		printState();
 		System.out.println("SubBytes!\n");
 	}
 
@@ -91,7 +91,7 @@ class Encode{
 			//offset is incremented after each row
 			offset++;
 		}
-		//printState();
+		printState();
 		System.out.println("ShiftRows!\n");
 	}
 
@@ -105,7 +105,7 @@ class Encode{
 		for(int column = 0; column < 4; column++){
 			matrixMul(column);
 		}
-		//printState();
+		printState();
 		System.out.println("mixColumns!\n");
 	}
 
