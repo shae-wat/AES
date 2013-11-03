@@ -7,6 +7,8 @@ class Decode{
 	public static byte[][] stateArray;
 	//holds the current version of the key to apply
 	public static byte[][] keyArray;
+	//keySchedule instance
+	public static KeySchedule key;
 
 	public static int[][] invSBox = {
 		{0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0xa3, 0x9e, 0x81, 0xf3, 0xd7, 0xfb},
@@ -30,7 +32,7 @@ class Decode{
 	//Constructor to decode this block of ciphertext with this given cipherkey
 	Decode(byte[][] s, byte[][] k){
 		this.stateArray = s;
-		this.keyArray = k;
+		key = new KeySchedule(k);
 		System.out.println("Decode!");
 	}
 
@@ -53,7 +55,7 @@ class Decode{
 				}
 			}
 		}
-		printState();
+		//printState();
 		System.out.println("invSubBytes!\n");
 	}
 
@@ -77,7 +79,7 @@ class Decode{
 			//offset is incremented after each row
 			offset++;
 		}
-		printState();
+		//printState();
 		System.out.println("invShiftRows!\n");
 	}
 
@@ -123,9 +125,9 @@ class Decode{
 
 	//==================================invAddRoundKey=====================
 	public static void invAddRoundKey(int round){
-		//Update the keyArray after using original cipher
-		if(round != 10)
-			//nextRoundKey(round);
+		
+		//retrieves the next 4x4 keyArray by grabbing the appropriate columns from the expandedKeyArry
+		keyArray = key.decodeNextKey(round);
 
 		//XOR columns of stateArray and key
 		for(int column = 0; column < 4; column++){

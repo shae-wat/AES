@@ -32,13 +32,7 @@ class Encode{
 	//Constructor to encode this block of plaintext with this given cipherkey
 	Encode(byte[][] s, byte[][] k){
 		this.stateArray = s;
-		//this.keyArray = k;
-		//printKey();
-		//System.out.println("keyArray before constructing instance of KeySchedule");
-		//make expanded key from the given key
 		key = new KeySchedule(k);
-		//printKey();
-		//System.out.println("keyArray AFTER constructing instance of KeySchedule");
 		System.out.println("Encode!\n");
 	}
 
@@ -70,7 +64,7 @@ class Encode{
 			}
 		}
 		//printState();
-		//System.out.println("SubBytes!\n");
+		System.out.println("SubBytes!\n");
 	}
 
 
@@ -98,7 +92,7 @@ class Encode{
 			offset++;
 		}
 		//printState();
-		//System.out.println("ShiftRows!\n");
+		System.out.println("ShiftRows!\n");
 	}
 
 	//==================================mixColumns=====================
@@ -112,7 +106,7 @@ class Encode{
 			matrixMul(column);
 		}
 		//printState();
-		//System.out.println("mixColumns!\n");
+		System.out.println("mixColumns!\n");
 	}
 
 	private static byte mul (int a, byte b) { 
@@ -162,7 +156,7 @@ class Encode{
 		}
 		printKey();
 		System.out.println("key applied in add round key\n\n");
-		//printState();
+		printState();
 		System.out.println("addRoundKey!\n");
 	}
 

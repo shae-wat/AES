@@ -55,7 +55,7 @@ class KeySchedule{
 		System.out.println("\n\n");
 		printExpandedKey();
 		System.out.println("expandedKeyArray\n\n");
-		System.out.println("KeySchedule!\n");
+		//System.out.println("KeySchedule!\n");
 	}
 
 	//encode function using the current generated expandedKeyArray
@@ -70,18 +70,24 @@ class KeySchedule{
 			}
 		}
 
-
-
-		System.out.println("encodeNextKey()\n");
+		//System.out.println("encodeNextKey()\n");
 		return keyArray;
 	}
 
 	//decode function
-	public static void decodeNextKey(){
+	public static byte[][] decodeNextKey(int round){
 		//get decreasing columns
-
+		int offset;
+		for(int j=0; j < 4; j++){
+			for(int jj=0; jj < 4; jj++){
+				offset =jj+(4*round);
+				keyArray[j][jj] = expandedKeyArray[j][offset];
+				System.out.println("decodeNextKey: keyArray["+j+"]["+jj+"] = " + String.format("%x",expandedKeyArray[j][offset]).toString());
+			}
+		}
 
 		System.out.println("decodeNextKey()\n");
+		return keyArray;
 	}
 
 
