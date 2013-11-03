@@ -30,9 +30,9 @@ class Decode{
 	};
 
 	//Constructor to decode this block of ciphertext with this given cipherkey
-	Decode(byte[][] s, byte[][] k){
+	Decode(byte[][] s, KeySchedule k){
 		this.stateArray = s;
-		key = new KeySchedule(k);
+		key = k;
 		System.out.println("Decode!\n\n");
 	}
 
