@@ -42,18 +42,24 @@ class KeySchedule{
 		for(int i=0; i < 4; i++){
 			//fill first four columns with given cipherkey
 			for(int j=0; j < 4; j++){
-				this.expandedKeyArray[i][j] = k[i][j];
-			}
-			printKey();
-			System.out.println("initial key");
-			//generate rest of the round keys
-			for(int round=1; round <= 10; round++){
-				nextRoundKey(round);
-				addKey(round);
-				printKey();
-				System.out.println("round"+round+" key");
+				// System.out.println("this.expandedKeyArray["+j+"]["+i+"]");
+				// System.out.println("this.keyArray["+j+"]["+i+"]");
+				this.expandedKeyArray[j][i] = keyArray[j][i];
 			}
 		}
+		//print expanded key after first 4 columns fill
+		printExpandedKey();
+		System.out.println("expandedKeyArray after first key inserted");
+
+
+		//generate rest of the round keys
+		for(int round=1; round <= 10; round++){
+			nextRoundKey(round);
+			printKey();
+			System.out.println("round"+round+" key");
+			//addKey(round);
+		}
+		
 
 		//printKey();
 		System.out.println("KeySchedule!\n");
@@ -93,7 +99,7 @@ class KeySchedule{
 			for(int jj=0; jj < 4; jj++){
 				offset =jj+(4*round);
 				//expandedKeyArray[j][offset] = keyArray[j][jj];
-				System.out.println("expandedKeyArray["+j+"]["+offset+"] = " + String.format("%x",expandedKeyArray[j][jj]).toString());
+				System.out.println("addKey: expandedKeyArray["+j+"]["+offset+"] = " + String.format("%x",expandedKeyArray[j][offset]).toString());
 			}
 		}
 	}
@@ -166,6 +172,16 @@ class KeySchedule{
 		for(int row = 0; row < 4; row++){
 			for(int column = 0; column < 4; column++){
 				String hexStr = String.format("%x",keyArray[row][column]).toString();
+				System.out.print(hexStr + " ");
+			}
+			System.out.println("");
+		}
+	}
+
+	public static void printExpandedKey(){
+		for(int row = 0; row < 4; row++){
+			for(int column = 0; column < 44; column++){
+				String hexStr = String.format("%x",expandedKeyArray[row][column]).toString();
 				System.out.print(hexStr + " ");
 			}
 			System.out.println("");
