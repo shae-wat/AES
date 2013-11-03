@@ -7,7 +7,7 @@ class Encode{
 	public static byte[][] stateArray;
 	//holds the current version of the key to apply
 	public static byte[][] keyArray;
-	//keySchedule instance
+	// //keySchedule instance
 	public static KeySchedule key;
 
 	public static int[][] sBox = {
@@ -30,9 +30,9 @@ class Encode{
 	}; 
 
 	//Constructor to encode this block of plaintext with this given cipherkey
-	Encode(byte[][] s, byte[][] k){
+	Encode(byte[][] s, KeySchedule k){
 		this.stateArray = s;
-		key = new KeySchedule(k);
+		key = k;
 		System.out.println("Encode!\n\n");
 	}
 
@@ -155,7 +155,7 @@ class Encode{
 			}
 		}
 		printKey();
-		System.out.println("key applied in add round key\n\n");
+		System.out.println("key applied in add round key\n");
 		printState();
 		System.out.println("addRoundKey!\n");
 	}
