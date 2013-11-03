@@ -12,6 +12,8 @@ class AES{
 	public static File keyFile;
 	public static File inputFile;
 	public static int keysize;
+	public static BufferedWriter encBw;
+	public static BufferedWriter decBw;
 
 	public static void main(String[] args) throws IOException{
 
@@ -26,15 +28,20 @@ class AES{
         if (pos > 0) {
             fName = fName.substring(0, pos);
         }
-        System.out.println("inputFile name = " + fName +"\n\n");
+        System.out.println("inputFile name = " + fName);
 
         if (args[0].equals("e")){
         	System.out.println("\nargs[0] = " + args[0] + " = encrypt mode");
             File encFile = new File(fName+".enc");	
+            //file writing mechanisms to write encoded lines to new .enc file
+            FileWriter encFw = new FileWriter(encFile);
+            encBw = new BufferedWriter(encFw);
         }
         else {
         	System.out.println("\nargs[0] = " + args[0] + " = decrypt mode");
         	File decFile = new File(fName+".dec");
+        	FileWriter decFw = new FileWriter(decFile);
+            decBw = new BufferedWriter(decFw);
         }    
 
 		//get keysize from terminal input
@@ -47,16 +54,16 @@ class AES{
 			line = key.nextLine();
 			//System.out.println("\n\nline of keyfile = " + line +"\n");
 			
-				int counter = 0;
-				for(int row = 0; row < 4; row++){
-					for(int column = 0; column < 4; column++){
-						char val1 = line.charAt(counter);
-						char val2 = line.charAt(counter + 1);
-						String strByte = val1 + "" + val2;
-						keyArray[row][column] = (byte) (Integer.parseInt(strByte,16));
-						counter += 2;
-					}
+			int counter = 0;
+			for(int row = 0; row < 4; row++){
+				for(int column = 0; column < 4; column++){
+					char val1 = line.charAt(counter);
+					char val2 = line.charAt(counter + 1);
+					String strByte = val1 + "" + val2;
+					keyArray[row][column] = (byte) (Integer.parseInt(strByte,16));
+					counter += 2;
 				}
+			}
 
 		}
 
@@ -69,7 +76,7 @@ class AES{
 
 		while(inputText.hasNextLine()){
 			line = inputText.nextLine();
-			System.out.println("\nnext line of file = " + line +"\n");
+			System.out.println("\nline of input file = " + line +"\n");
 			if(line.length() == 32){
 			
 				int counter = 0;
@@ -103,6 +110,14 @@ class AES{
 		        		encode.shiftRows();
 		        		encode.addRoundKey(10);
 		            }
+		            //write encoded version of input line to .enc file
+		            for(int row = 0; row < 4; row++){
+						for(int column = 0; column < 4; column++){
+							encBw.write(String.format("%x",stateArray[row][column]).toString());
+						}
+					}
+		            encBw.write("\n");
+		      
 
 		        }
 		        //Decryption with the newly created stateArray
@@ -131,6 +146,14 @@ class AES{
 
 			System.out.println("\nAES!");
 		}
+		if (args[0].equals("e")){ 
+        	encBw.flush();
+            encBw.close();
+        }
+        else{
+        	decBw.flush();
+            decBw.close();
+        }
 	}
 
 	
