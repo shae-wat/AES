@@ -32,9 +32,13 @@ class Encode{
 	//Constructor to encode this block of plaintext with this given cipherkey
 	Encode(byte[][] s, byte[][] k){
 		this.stateArray = s;
-		this.keyArray = k;
+		//this.keyArray = k;
+		//printKey();
+		//System.out.println("keyArray before constructing instance of KeySchedule");
 		//make expanded key from the given key
-		key = new KeySchedule(keyArray);
+		key = new KeySchedule(k);
+		//printKey();
+		//System.out.println("keyArray AFTER constructing instance of KeySchedule");
 		System.out.println("Encode!\n");
 	}
 
@@ -143,13 +147,9 @@ class Encode{
 	//==================================addRoundKey=====================
 	public static void addRoundKey(int round){
 
-		// printKey();
-		// System.out.println("key before modification\n");
 
-		//Update the keyArray after using original cipher
-		if(round != 0)
-			//nextRoundKey(round);
-			//encodeNextKey()
+		//retrieves the next 4x4 keyArray by grabbing the appropriate columns from the expandedKeyArry
+		keyArray = key.encodeNextKey(round);
 
 		//XOR columns of stateArray and key
 		for(int column = 0; column < 4; column++){
@@ -160,10 +160,10 @@ class Encode{
 				//System.out.println("result["+row+"]["+column+"] = " + String.format("%x",stateArray[row][column]).toString());
 			}
 		}
-		//printKey();
-		//System.out.println("key applied\n");
+		printKey();
+		System.out.println("key applied in add round key\n\n");
 		//printState();
-		//System.out.println("addRoundKey!\n");
+		System.out.println("addRoundKey!\n");
 	}
 
 
