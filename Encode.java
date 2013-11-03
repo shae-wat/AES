@@ -7,6 +7,8 @@ class Encode{
 	public static byte[][] stateArray;
 	//holds the current version of the key to apply
 	public static byte[][] keyArray;
+	//keySchedule instance
+	public static KeySchedule key;
 
 	public static int[][] sBox = {
 		{0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76}, 
@@ -31,6 +33,8 @@ class Encode{
 	Encode(byte[][] s, byte[][] k){
 		this.stateArray = s;
 		this.keyArray = k;
+		//make expanded key from the given key
+		key = new KeySchedule(keyArray);
 		System.out.println("Encode!\n");
 	}
 
@@ -144,7 +148,8 @@ class Encode{
 
 		//Update the keyArray after using original cipher
 		if(round != 0)
-			nextRoundKey(round);
+			//nextRoundKey(round);
+			//encodeNextKey()
 
 		//XOR columns of stateArray and key
 		for(int column = 0; column < 4; column++){
@@ -163,78 +168,6 @@ class Encode{
 
 
 
-	//==================================keyScheduling=====================
-
-	public static int[][] rCon = {
-		{0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	};
-
-	public static void nextRoundKey(int round){
-
-		//make first column of next round key
-		byte[] prevFirstCol = new byte[4];
-		byte[] prevLastCol = new byte[4];
-		for (int column= 0; column < 4; column++){
-			prevFirstCol[column] = keyArray[column][0];
-			prevLastCol[column] =keyArray[column][3]; 	
-		}
-		makeFirstColumn(prevFirstCol, prevLastCol, round);
-
-		//generate rest of the new key's columns
-		for (int column = 1; column < 4; column++){
-			for (int row = 0; row < 4; row++){
-				//XOR prev column of the key in process of being generated & prev key's row to be replaced
-				keyArray[row][column] = (byte)(keyArray[row][column-1] ^ keyArray[row][column]);
-			}
-		}
-
-		//printKey();
-		//System.out.println("key generated after nextRoundKey\n");
-
-
-	}
-
-	public static void makeFirstColumn(byte[] prevFirstCol, byte[] prevLastCol, int round){
-		byte[] rotWord = new byte[4];
-
-		//rotate last column of previous key to create RotWord
-		for(int i = 0; i < 4; i++){
-			if(i==3)
-				rotWord[i] = prevLastCol[0];
-			else
-				rotWord[i] = prevLastCol[i + 1];
-		}
-
-		//subBytes of the RotWord with the s-box
-		for(int k = 0; k < 4; k++){
-			String hexStr = String.format("%x",rotWord[k]).toString();
-			//System.out.println("hexstr = " + hexStr);
-			char[] charLookup = hexStr.toCharArray();
-			//Lookup
-			if (charLookup.length == 1){
-				//System.out.println("0 " + charLookup[0]);
-				int j = Character.getNumericValue(charLookup[0]);
-				rotWord[k] = (byte)sBox[0][j];
-			}
-			else {
-				//System.out.println(charLookup[0] + " " + charLookup[1]);
-				int i = Character.getNumericValue(charLookup[0]);
-				int j = Character.getNumericValue(charLookup[1]);
-				//System.out.println("i = " + i + ", j = " + j);
-				//System.out.println("rotWord["+k+"] = " + String.format("%x",sBox[i][j]).toString());
-				rotWord[k] = (byte)sBox[i][j];
-			}
-		}
-
-		// XOR first column of previous key & Rotword & Rcon
-		for(int k = 0; k < 4; k++){
-			keyArray[k][0] = (byte)(prevFirstCol[k] ^ rotWord[k] ^ rCon[k][round-1]);
-			//System.out.println("XOR first column of previous key & Rotword & Rcon\nkeyArray["+k+"]["+(round-1)+"] = " + String.format("%x",keyArray[k][(round-1)]).toString());
-		}
-	}
 
 	public static void printState(){
 		for(int row = 0; row < 4; row++){

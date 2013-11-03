@@ -125,7 +125,7 @@ class Decode{
 	public static void invAddRoundKey(int round){
 		//Update the keyArray after using original cipher
 		if(round != 10)
-			nextRoundKey(round);
+			//nextRoundKey(round);
 
 		//XOR columns of stateArray and key
 		for(int column = 0; column < 4; column++){
@@ -143,99 +143,6 @@ class Decode{
 	}
 
 
-	//==================================keyScheduling=====================
-
-	public static int[][] rCon = {
-		{0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	};
-
-	public static int[][] invRCon = {
-		{0x36, 0x1b, 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	};
-
-	public static void nextRoundKey(int round){
-
-
-
-		//generate the new key's columns after the first column
-		for (int column = 3; column > 0; column--){
-			for (int row = 0; row < 4; row++){
-				//XOR prev column of the key in process of being generated & prev key's row to be replaced
-				keyArray[row][column] = (byte)(keyArray[row][column-1] ^ keyArray[row][column]);
-			}
-		}
-
-		//store current first and last columns
-		byte[] currentFirstCol = new byte[4];
-		byte[] prevLastCol = new byte[4];
-		for (int column= 0; column < 4; column++){
-			currentFirstCol[column] = keyArray[column][0];
-			prevLastCol[column] =keyArray[column][3]; 	
-		}
-		// printIntArr(prevFirstCol);
-		// System.out.println("prevFirstCol");
-		// printIntArr(prevLastCol);
-		// System.out.println("prevLastCol");
-		makeFirstColumn(currentFirstCol, prevLastCol, round);
-
-
-	}
-
-	public static void makeFirstColumn(byte[] currentFirstCol, byte[] prevLastCol, int round){
-		byte[] rotWord = new byte[4];
-		Encode e = new Encode(stateArray, keyArray);
-
-		//reverse rotation
-		for(int i = 0; i < 4; i++){
-
-			rotWord[i] = prevLastCol[i];
-		}
-		//printIntArr(rotWord);
-		//System.out.println("rot word taken from last line of already XORed array");
-
-		//reverse rotation
-		for(int i = 0; i < 4; i++){
-			if(i==3)
-				rotWord[i] = prevLastCol[0];
-			else
-				rotWord[i] = prevLastCol[i+1];
-		}
-		//printIntArr(rotWord);
-		//System.out.println("rot word after inverse shift");
-
-		//subBytes of the RotWord with the s-box
-		for(int k = 0; k < 4; k++){
-			String hexStr = String.format("%x",rotWord[k]).toString();
-			//System.out.println("hexstr = " + hexStr);
-			char[] charLookup = hexStr.toCharArray();
-			//Lookup
-			if (charLookup.length == 1){
-				int j = Character.getNumericValue(charLookup[0]);
-				rotWord[k] = (byte)e.sBox[0][j];
-			}
-			else {
-				int i = Character.getNumericValue(charLookup[0]);
-				int j = Character.getNumericValue(charLookup[1]);
-				rotWord[k] = (byte)e.sBox[i][j];
-			}
-		}
-		//printIntArr(rotWord);
-		//System.out.println("rot word after sub");
-
-
-
-		// XOR first column of previous key & Rotword & Rcon****going backwards
-		for(int k = 0; k < 4; k++){
-			keyArray[k][0] = (byte)(currentFirstCol[k] ^ rotWord[k] ^ invRCon[k][round]);
-			//System.out.println("XOR first column of current key & Rotword & Rcon\nkeyArray["+k+"][0] = " + String.format("%x",keyArray[k][0]).toString());
-		}
-	}
 
 
 

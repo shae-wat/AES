@@ -48,20 +48,21 @@ class KeySchedule{
 			}
 		}
 		//print expanded key after first 4 columns fill
-		printExpandedKey();
-		System.out.println("expandedKeyArray after first key inserted");
+		//printExpandedKey();
+		//System.out.println("expandedKeyArray after first key inserted");
 
 
 		//generate rest of the round keys
 		for(int round=1; round <= 10; round++){
 			nextRoundKey(round);
-			printKey();
-			System.out.println("round"+round+" key");
-			//addKey(round);
+			//printKey();
+			//System.out.println("round"+round+" key");
+			addKey(round);
 		}
-		
 
-		//printKey();
+		System.out.println("\n\n");
+		printExpandedKey();
+		System.out.println("expandedKeyArray\n\n");
 		System.out.println("KeySchedule!\n");
 	}
 
@@ -98,8 +99,8 @@ class KeySchedule{
 		for(int j=0; j < 4; j++){
 			for(int jj=0; jj < 4; jj++){
 				offset =jj+(4*round);
-				//expandedKeyArray[j][offset] = keyArray[j][jj];
-				System.out.println("addKey: expandedKeyArray["+j+"]["+offset+"] = " + String.format("%x",expandedKeyArray[j][offset]).toString());
+				expandedKeyArray[j][offset] = keyArray[j][jj];
+				//System.out.println("addKey: expandedKeyArray["+j+"]["+offset+"] = " + String.format("%x",keyArray[j][jj]).toString());
 			}
 		}
 	}
