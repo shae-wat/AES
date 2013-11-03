@@ -29,57 +29,49 @@ class AES{
         System.out.println("inputFile name = " + fName +"\n\n");
 
         if (args[0].equals("e")){
-            System.out.println("\nargs[0] = " + args[0] + " = encrypt mode\n");
+        	System.out.println("\nargs[0] = " + args[0] + " = encrypt mode");
             File encFile = new File(fName+".enc");	
         }
         else {
-    		System.out.println("\nargs[0] = " + args[0] + " = decrypt mode");
+        	System.out.println("\nargs[0] = " + args[0] + " = decrypt mode");
         	File decFile = new File(fName+".dec");
         }    
 
 		//get keysize from terminal input
 		keysize = 128;
 
-		Scanner inputText = new Scanner(new FileReader(inputFile));
-		//line taken from inputText
+		Scanner key = new Scanner(new FileReader(keyFile));
 		String line;
+		byte[][]keyArray = new byte[4][4];;
+		if(key.hasNextLine()){
+			line = key.nextLine();
+			//System.out.println("\n\nline of keyfile = " + line +"\n");
+			
+				int counter = 0;
+				for(int row = 0; row < 4; row++){
+					for(int column = 0; column < 4; column++){
+						char val1 = line.charAt(counter);
+						char val2 = line.charAt(counter + 1);
+						String strByte = val1 + "" + val2;
+						keyArray[row][column] = (byte) (Integer.parseInt(strByte,16));
+						counter += 2;
+					}
+				}
+
+		}
+
+		//keySchedule instance from given key
+		KeySchedule keySchedule = new KeySchedule(keyArray);
+		
+		Scanner inputText = new Scanner(new FileReader(inputFile));
 		//128-byte block to fill
 		byte[][] stateArray = new byte[4][4];
 
-		//Scanner key = new Scanner(new FileReader(keyFile));
-
-
-		byte[][]keyArray = {
-			{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00},
-			{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00},
-			{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00},
-			{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00}
-		};
-
-		//keySchedule instance
-		KeySchedule keySchedule = new KeySchedule(keyArray);
-		
 		while(inputText.hasNextLine()){
 			line = inputText.nextLine();
-			System.out.println("\n\nnext line of file = " + line +"\n");
+			System.out.println("\nnext line of file = " + line +"\n");
 			if(line.length() == 32){
 			
-				// int byteCounter = 0;
-
-				// //create new instance of stateArray to send thrgh AES
-				// for(int row = 0; row < 4; row++){
-			 // 		for(int column = 0; column < 4; column++){
-			 			
-			 // 			stateArray[row][column] = (byte)pt.charAt(byteCounter);
-			 // 			System.out.println("HASNEXT stateArray["+row+"]["+column+"] = pt.charAt("+(byteCounter) +" = " + String.format("%x",(byte)pt.charAt(byteCounter)).toString());
-		 	// 			//pad to the right with zeros
-		 	// 			// else{
-		 	// 			// 	stateArray[row][column] = 0;
-		 	// 			// }
-			 // 			//System.out.println("stateArray["+row+"]["+column+"] = " + stateArray[row][column]);
-		 	// 			byteCounter++;
-			 // 		}
-			 // 	}
 				int counter = 0;
 				for(int row = 0; row < 4; row++){
 					for(int column = 0; column < 4; column++){
@@ -87,20 +79,9 @@ class AES{
 						char val2 = line.charAt(counter + 1);
 						String strByte = val1 + "" + val2;
 						stateArray[row][column] = (byte) (Integer.parseInt(strByte,16));
-						// stateArray[row][column] = bytesFromString[counter];
-						//System.out.println(stateArray[row][column] & 0xff);
 						counter += 2;
 					}
 				}
-
-				for(int row = 0; row < 4; row++){
-					for(int column = 0; column < 4; column++){
-						String hexStr = String.format("%x",stateArray[row][column]).toString();
-						System.out.print(hexStr + " ");
-					}
-					System.out.println("");
-				}
-			System.out.println("stateArray of this line's input");
 
 			 	//Encryption with the newly created stateArray
 				if (args[0].equals("e")){          
@@ -126,8 +107,6 @@ class AES{
 		        }
 		        //Decryption with the newly created stateArray
 		        else {
-		        	System.out.println("\nargs[0] = " + args[0] + " = decrypt mode");
-		            File decFile = new File(fName+".dec");
 		            Decode decode = new Decode(stateArray, keySchedule);
 
 		            //number of rounds depends on key size

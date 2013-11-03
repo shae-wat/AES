@@ -33,7 +33,8 @@ class Encode{
 	Encode(byte[][] s, KeySchedule k){
 		this.stateArray = s;
 		key = k;
-		System.out.println("Encode!\n\n");
+		printState();
+		System.out.println("stateArray constructed from line of file to encode\n\n");
 	}
 
 

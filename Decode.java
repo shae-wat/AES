@@ -33,7 +33,8 @@ class Decode{
 	Decode(byte[][] s, KeySchedule k){
 		this.stateArray = s;
 		key = k;
-		System.out.println("Decode!\n\n");
+		printState();
+		System.out.println("stateArray constructed from line of file to decode\n");
 	}
 
 	//==================================invSubBytes=====================
