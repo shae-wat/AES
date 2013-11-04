@@ -11,3 +11,15 @@ shaelynjoy@gmail.com
 CSID shaelyn 
 EID sjw962
 
+Timing Information
+===
+
+Encryption:
+It took 1.495 seconds to encrypt 363264 bytes using our encryption function
+Thus, the bytes/second bandwidth for encryption is around 242985.9531772575 bytes/second
+Thus, the MB/second bandwidth for decryption is around 0.232 MB/second
+
+Decryption:
+It took 1.447 seconds to encrypt 363264 bytes using our encryption function
+Thus, the bytes/second bandwidth for decryption is around 251046.3026952315 bytes/second
+Thus, the MB/second bandwidth for decryption is around .239 MB/second

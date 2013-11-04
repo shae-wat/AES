@@ -17,6 +17,9 @@ class AES{
 
 	public static void main(String[] args) throws IOException{
 
+		// returns the current time in milliseconds 
+        long timeStart = System.currentTimeMillis();
+
 		//get input arguments
 		keyFile = new File(args[1]);
         System.out.println("args[1] = " + args[1]);
@@ -74,6 +77,8 @@ class AES{
 		Scanner inputText = new Scanner(new FileReader(inputFile));
 		//128-byte block to fill
 		byte[][] stateArray = new byte[4][4];
+		//track encrypted/decrypted bytes
+		long numBytes = 0;
 		while(inputText.hasNextLine()){
 			line = inputText.nextLine();
 			System.out.println("\nline of input file = " + line +"\n");
@@ -158,6 +163,8 @@ class AES{
 		            decBw.write("\n");
 		        }
 	        }
+	        //Increment counter of encrypted/decrypted bytes
+	        numBytes += 128;
 		}
 
 		//close file writing streams
@@ -169,6 +176,17 @@ class AES{
         	decBw.flush();
             decBw.close();
         }
+
+
+        long timeFinish = System.currentTimeMillis();
+        long timeElapsed = timeFinish - timeStart;
+        double secondsElapsed = (timeFinish - timeStart) / 1000.0;
+
+        //timing information is very different when print statements are enabled in Encode and Decode classes
+        // System.out.print("Run Time in seconds = " + secondsElapsed + " seconds\n");
+        // System.out.print("total bytes transferred = " + numBytes + " bytes\n");
+        // double bandwidth = numBytes / secondsElapsed;
+        // System.out.print("Bandwidth = " + bandwidth + " bytes/second\n\n");
 	}
 
 	
