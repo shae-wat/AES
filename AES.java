@@ -114,11 +114,12 @@ class AES{
 		            for(int row = 0; row < 4; row++){
 						for(int column = 0; column < 4; column++){
 							String hexStr = String.format("%x",stateArray[row][column]).toString();
+							//System.out.println("hexStr = " + hexStr);
 							//pad front of hex with 0
 							if (hexStr.length() == 1){
 								hexStr = "0" + hexStr;
 							}
-							decBw.write(hexStr);
+							encBw.write(hexStr);
 						}
 					}
 		            encBw.write("\n");
