@@ -17,6 +17,7 @@ class AES{
 
 	public static void main(String[] args) throws IOException{
 
+		//get input arguments
 		keyFile = new File(args[1]);
         System.out.println("args[1] = " + args[1]);
         inputFile = new File(args[2]);
@@ -30,6 +31,8 @@ class AES{
         }
         System.out.println("inputFile name = " + fName);
 
+
+        //create file writing streams
         if (args[0].equals("e")){
         	System.out.println("\nargs[0] = " + args[0] + " = encrypt mode");
             File encFile = new File(fName+".enc");	
@@ -44,9 +47,9 @@ class AES{
             decBw = new BufferedWriter(decFw);
         }    
 
-		//get keysize from terminal input
-		keysize = 128;
 
+		//get key from keyFile input
+		keysize = 128;
 		Scanner key = new Scanner(new FileReader(keyFile));
 		String line;
 		byte[][]keyArray = new byte[4][4];;
@@ -66,14 +69,15 @@ class AES{
 			}
 
 		}
-
 		//keySchedule instance from given key
 		KeySchedule keySchedule = new KeySchedule(keyArray);
 		
+
+		//encode or decode lines from inputFile input
+		//and write encoded or decoded lines to the appropriate file
 		Scanner inputText = new Scanner(new FileReader(inputFile));
 		//128-byte block to fill
 		byte[][] stateArray = new byte[4][4];
-
 		while(inputText.hasNextLine()){
 			line = inputText.nextLine();
 			System.out.println("\nline of input file = " + line +"\n");
@@ -123,8 +127,6 @@ class AES{
 						}
 					}
 		            encBw.write("\n");
-		      
-
 		        }
 		        //Decryption with the newly created stateArray
 		        else {
@@ -160,10 +162,9 @@ class AES{
 		            decBw.write("\n");
 		        }
 	        }
-	        
-
-			//System.out.println("\nAES!");
 		}
+
+		//close file writing streams
 		if (args[0].equals("e")){ 
         	encBw.flush();
             encBw.close();
