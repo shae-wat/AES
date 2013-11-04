@@ -113,7 +113,12 @@ class AES{
 		            //write encoded version of input line to .enc file
 		            for(int row = 0; row < 4; row++){
 						for(int column = 0; column < 4; column++){
-							encBw.write(String.format("%x",stateArray[row][column]).toString());
+							String hexStr = String.format("%x",stateArray[row][column]).toString();
+							//pad front of hex with 0
+							if (hexStr.length() == 1){
+								hexStr = "0" + hexStr;
+							}
+							decBw.write(hexStr);
 						}
 					}
 		            encBw.write("\n");
@@ -140,11 +145,23 @@ class AES{
 			            decode.invSubBytes();
 			            decode.invAddRoundKey(0);
 		            }
+		            //write encoded version of input line to .enc file
+		            for(int row = 0; row < 4; row++){
+						for(int column = 0; column < 4; column++){
+							String hexStr = String.format("%x",stateArray[row][column]).toString();
+							//pad front of hex with 0
+							if (hexStr.length() == 1){
+								hexStr = "0" + hexStr;
+							}
+							decBw.write(hexStr);
+						}
+					}
+		            decBw.write("\n");
 		        }
 	        }
 	        
 
-			System.out.println("\nAES!");
+			//System.out.println("\nAES!");
 		}
 		if (args[0].equals("e")){ 
         	encBw.flush();
