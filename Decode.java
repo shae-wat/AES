@@ -147,8 +147,6 @@ class Decode{
 
 
 
-
-
 	public static void printState(){
 		for(int row = 0; row < 4; row++){
 			for(int column = 0; column < 4; column++){
@@ -166,12 +164,5 @@ class Decode{
 			}
 			System.out.println("");
 		}
-	}
-	public static void printIntArr(byte[] ia){
-		for (int i = 0; i < ia.length; i++){
-			String hexStr = String.format("%x",ia[i]).toString();
-			System.out.print(hexStr + " ");
-		}
-		System.out.println("");
 	}
 }

@@ -182,11 +182,4 @@ class Encode{
 			System.out.println("");
 		}
 	}
-	public static void printIntArr(int[] ia){
-		for (int i = 0; i < ia.length; i++){
-			String hexStr = String.format("%x",ia[i]).toString();
-			System.out.print(hexStr + " ");
-		}
-		System.out.println("");
-	}
 }

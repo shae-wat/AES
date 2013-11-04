@@ -25,10 +25,6 @@ class AES{
 
         //Get name of inputFile as a string without any extensions
         String fName = inputFile.getName();
-        int pos = fName.lastIndexOf(".");
-        if (pos > 0) {
-            fName = fName.substring(0, pos);
-        }
         System.out.println("inputFile name = " + fName);
 
 
@@ -123,7 +119,7 @@ class AES{
 							if (hexStr.length() == 1){
 								hexStr = "0" + hexStr;
 							}
-							encBw.write(hexStr);
+							encBw.write(hexStr.toUpperCase());
 						}
 					}
 		            encBw.write("\n");
@@ -156,7 +152,7 @@ class AES{
 							if (hexStr.length() == 1){
 								hexStr = "0" + hexStr;
 							}
-							decBw.write(hexStr);
+							decBw.write(hexStr.toUpperCase());
 						}
 					}
 		            decBw.write("\n");
